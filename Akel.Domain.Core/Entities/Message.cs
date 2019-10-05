@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Akel.Domain.Core
 {
+    
     public class Message
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

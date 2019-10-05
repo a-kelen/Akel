@@ -8,8 +8,8 @@ namespace Akel.Infrastructure.Data
 {
     public class AuditionRepository:IRepository<Audition>
     {
-        private AppContext db;
-        public AuditionRepository(AppContext context)
+        private ApplContext db;
+        public AuditionRepository(ApplContext context)
         {
             this.db = context;
         }

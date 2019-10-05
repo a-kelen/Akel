@@ -15,5 +15,6 @@ namespace Akel.Domain.Core
         public Chat Chat { get; set; }
         public Guid UserProfileId { get; set; }
         public UserProfile UserProfile { get; set; }
+
     }
 }

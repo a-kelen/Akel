@@ -8,8 +8,8 @@ namespace Akel.Infrastructure.Data
 {
     public class MessageRepository:IRepository<Message>
     {
-        private AppContext db;
-        public MessageRepository(AppContext context)
+        private ApplContext db;
+        public MessageRepository(ApplContext context)
         {
             this.db = context;
         }

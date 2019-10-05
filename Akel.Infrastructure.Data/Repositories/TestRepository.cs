@@ -9,8 +9,8 @@ namespace Akel.Infrastructure.Data
 {
     public class TestRepository:IRepository<Test>
     {
-        private AppContext db;
-        public TestRepository(AppContext context)
+        private ApplContext db;
+        public TestRepository(ApplContext context)
         {
             this.db = context;
         }

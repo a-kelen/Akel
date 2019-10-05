@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Akel.Domain.Core\Akel.Domain.Core.csproj" />
+    <ProjectReference Include="..\Akel.Infrastructure.Data\Akel.Infrastructure.Data.csproj" />
   </ItemGroup>
 
 </Project>

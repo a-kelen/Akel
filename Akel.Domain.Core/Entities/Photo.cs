@@ -11,7 +11,7 @@ namespace Akel.Domain.Core
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public Guid Id { get; set; }
-        public Guid AuditionId { get; set; }
-        public Audition Audition { get; set; }
+        public string Path { get; set; }
+        public string Name { get; set; }
     }
 }

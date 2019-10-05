@@ -9,8 +9,8 @@ namespace Akel.Infrastructure.Data.Repositories
 {
     class SubscriberRepository:IRepository<Subscriber>
     {
-        private AppContext db;
-        public SubscriberRepository(AppContext context)
+        private ApplContext db;
+        public SubscriberRepository(ApplContext context)
         {
             this.db = context;
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,13 +7,16 @@ namespace Akel.Infrastructure.Data
 {
     class UnitOfWork:IDisposable
     {
-        AppContext db = new AppContext();
+        public UnitOfWork()
+        {
+            //db = new AppContext();
+        }
+        ApplContext db;
         AnswerRepository AnswerRepository;
         AuditionRepository AuditionRepository;
         ChatRepository ChatRepository;
         CommentRepository CommentRepository;
         FriendRepository FriendRepository;
-        MemberRepository MemberRepository;
         MessageRepository MessageRepository;
         PostRepository PostRepository;
         QuestionRepository QuestionRepository;
@@ -51,13 +55,6 @@ namespace Akel.Infrastructure.Data
             get
             {
                 return FriendRepository ?? (FriendRepository = new FriendRepository(db));
-            }
-        }
-        public MemberRepository Members
-        {
-            get
-            {
-                return MemberRepository ?? (MemberRepository = new MemberRepository(db));
             }
         }
         public MessageRepository Messages

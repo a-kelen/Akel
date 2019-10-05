@@ -12,7 +12,7 @@ using Akel.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using Akel.Infrastructure.Data;
 namespace Akel
 {
     public class Startup
@@ -30,6 +30,14 @@ namespace Akel
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplContext>(options =>
+            {
+                options.UseSqlServer( Configuration.GetConnectionString("DefaultConnection"),
+                    sqlServerOptions =>
+                    {
+                        sqlServerOptions.MigrationsAssembly("Akel");
+                    });
+            });
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();

@@ -9,8 +9,8 @@ namespace Akel.Infrastructure.Data
 {
     public class ResultRepository
     {
-        private AppContext db;
-        public ResultRepository(AppContext context)
+        private ApplContext db;
+        public ResultRepository(ApplContext context)
         {
             this.db = context;
         }

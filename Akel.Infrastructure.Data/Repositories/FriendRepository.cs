@@ -8,8 +8,8 @@ namespace Akel.Infrastructure.Data
 {
     public class FriendRepository:IRepository<Friend>
     {
-        private AppContext db;
-        public FriendRepository(AppContext context)
+        private ApplContext db;
+        public FriendRepository(ApplContext context)
         {
             this.db = context;
         }

@@ -9,8 +9,8 @@ namespace Akel.Infrastructure.Data
 {
     public class UserProfileRepository:IRepository<UserProfile>
     {
-        private AppContext db;
-        public UserProfileRepository(AppContext context)
+        private ApplContext db;
+        public UserProfileRepository(ApplContext context)
         {
             this.db = context;
         }

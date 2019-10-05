@@ -8,8 +8,8 @@ namespace Akel.Infrastructure.Data
 {
     public class PostRepository:IRepository<Post>
     {
-        private AppContext db;
-        public PostRepository(AppContext context)
+        private ApplContext db;
+        public PostRepository(ApplContext context)
         {
             this.db = context;
         }

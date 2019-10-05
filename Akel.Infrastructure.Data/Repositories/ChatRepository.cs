@@ -9,8 +9,8 @@ namespace Akel.Infrastructure.Data
 {
     public class ChatRepository : IRepository<Chat>
     {
-        private AppContext db;
-        public ChatRepository(AppContext context)
+        private ApplContext db;
+        public ChatRepository(ApplContext context)
         {
             this.db = context;
         }

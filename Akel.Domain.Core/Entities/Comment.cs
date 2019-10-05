@@ -8,6 +8,10 @@ namespace Akel.Domain.Core
 {
     public class Comment
     {
+        public Comment()
+        {
+
+        }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public Guid Id { get; set; }

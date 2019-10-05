@@ -18,7 +18,7 @@ namespace Akel.Domain.Core
             Comments = new List<Comment>();
             Results = new List<Result>();
             Subscribers = new List<Subscriber>();
-            Members = new List<Member>();
+            Chats = new List<UserProfileChat>();
             Messages = new List<Message>();
         }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -36,7 +36,7 @@ namespace Akel.Domain.Core
         public List<Comment> Comments { get; set; }
         public List<Result> Results { get; set; }
         public List<Subscriber> Subscribers { get; set; }
-        public List<Member> Members { get; set; }
+        public List<UserProfileChat> Chats { get; set; }
         public List<Message> Messages { get; set; }
     }
 }

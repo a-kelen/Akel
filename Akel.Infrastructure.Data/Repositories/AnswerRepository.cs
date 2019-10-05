@@ -9,8 +9,8 @@ namespace Akel.Infrastructure.Data
 {
     public class AnswerRepository :IRepository<Answer>
     {
-        private AppContext db;
-        public AnswerRepository(AppContext context)
+        private ApplContext db;
+        public AnswerRepository(ApplContext context)
         {
             this.db = context;
         }

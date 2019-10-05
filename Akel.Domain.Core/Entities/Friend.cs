@@ -15,6 +15,7 @@ namespace Akel.Domain.Core
         public UserProfile UserProfile { get; set; }
         public Guid UserFriendId { get; set; }
         [ForeignKey("UserFriendId")]
+        [NotMapped]
         public UserProfile UserFriend { get; set; }
     }
 }

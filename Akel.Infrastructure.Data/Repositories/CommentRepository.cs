@@ -8,8 +8,8 @@ namespace Akel.Infrastructure.Data
 {
     public class CommentRepository:IRepository<Comment>
     {
-        private AppContext db;
-        public CommentRepository(AppContext context)
+        private ApplContext db;
+        public CommentRepository(ApplContext context)
         {
             this.db = context;
         }

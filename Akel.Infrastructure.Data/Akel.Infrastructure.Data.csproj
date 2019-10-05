@@ -5,9 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Akel.Domain.Core\Akel.Domain.Core.csproj" />
     <ProjectReference Include="..\Akel.Domain.Interface\Akel.Domain.Interface.csproj" />
-    <ProjectReference Include="..\ClassLibrary\ClassLibrary.csproj" />
   </ItemGroup>
 
 </Project>
