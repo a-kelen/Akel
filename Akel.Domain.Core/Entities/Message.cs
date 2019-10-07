@@ -12,9 +12,9 @@ namespace Akel.Domain.Core
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public Guid Id { get; set; }
-        public Guid ChatId { get; set; }
+        public Guid? ChatId { get; set; }
         public Chat Chat { get; set; }
-        public Guid UserProfileId { get; set; }
+        public Guid? UserProfileId { get; set; }
         public UserProfile UserProfile { get; set; }
     }
 }

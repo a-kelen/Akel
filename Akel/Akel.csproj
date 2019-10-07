@@ -5,6 +5,29 @@
     <UserSecretsId>aspnet-Akel-2674602F-B485-4279-935B-9580D93281A8</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Akel\20191005214940_init2.cs" />
+    <Compile Remove="Akel\20191005214940_init2.Designer.cs" />
+    <Compile Remove="Akel\20191005215803_init.cs" />
+    <Compile Remove="Akel\20191005215803_init.Designer.cs" />
+    <Compile Remove="Akel\20191005220001_Ad.cs" />
+    <Compile Remove="Akel\20191005220001_Ad.Designer.cs" />
+    <Compile Remove="Akel\20191006183852_init4.cs" />
+    <Compile Remove="Akel\20191006183852_init4.Designer.cs" />
+    <Compile Remove="Akel\20191006184937_Identity.cs" />
+    <Compile Remove="Akel\20191006184937_Identity.Designer.cs" />
+    <Compile Remove="Akel\20191006185747_init5.cs" />
+    <Compile Remove="Akel\20191006185747_init5.Designer.cs" />
+    <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.cs" />
+    <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.Designer.cs" />
+    <Compile Remove="Data\Migrations\20191003164925_m1.cs" />
+    <Compile Remove="Data\Migrations\20191003164925_m1.Designer.cs" />
+    <Compile Remove="Data\Migrations\20191005201948_AddEntities.cs" />
+    <Compile Remove="Data\Migrations\20191005201948_AddEntities.Designer.cs" />
+    <Compile Remove="Migrations\20191005211106_InitialStudentRegistrationDbMigration.cs" />
+    <Compile Remove="Migrations\20191005211106_InitialStudentRegistrationDbMigration.Designer.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.0.0" />
@@ -15,12 +38,18 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc3" />
   </ItemGroup>
 
 
   <ItemGroup>
     <ProjectReference Include="..\Akel.Domain.Core\Akel.Domain.Core.csproj" />
     <ProjectReference Include="..\Akel.Infrastructure.Data\Akel.Infrastructure.Data.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Data\Migrations\" />
   </ItemGroup>
 
 </Project>

@@ -12,7 +12,7 @@ namespace Akel.Infrastructure.Data
         public DbSet<Chat> Chats { get; set; }
         public DbSet<Audition> Auditions { get; set; }
         public DbSet<Friend> Friends { get; set; }
-      //  public DbSet<Member> Members { get; set; }
+
         public DbSet<Message> Messages { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Question> Questions { get; set; }
@@ -45,6 +45,10 @@ namespace Akel.Infrastructure.Data
                 .HasOne(sc => sc.Chat)
                 .WithMany(c => c.Users)
                 .HasForeignKey(sc => sc.ChatId);
+            /*modelBuilder.Entity<Message>()
+                .HasOne(e=>e.UserProfile)
+                .WithMany(t=>t.)
+                .*/
 
 
         }

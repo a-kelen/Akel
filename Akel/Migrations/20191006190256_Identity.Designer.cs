@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Akel.Data.Migrations
+namespace Akel.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191005201948_AddEntities")]
-    partial class AddEntities
+    [Migration("20191006190256_Identity")]
+    partial class Identity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

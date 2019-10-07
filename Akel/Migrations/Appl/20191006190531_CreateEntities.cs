@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Akel.Migrations
+namespace Akel.Migrations.Appl
 {
-    public partial class InitialStudentRegistrationDbMigration : Migration
+    public partial class CreateEntities : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -146,6 +146,31 @@ namespace Akel.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Subscribers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    AuditionId = table.Column<Guid>(nullable: false),
+                    UserProfileId = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subscribers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Subscribers_Auditions_AuditionId",
+                        column: x => x.AuditionId,
+                        principalTable: "Auditions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Subscribers_UserProfiles_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalTable: "UserProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tests",
                 columns: table => new
                 {
@@ -166,37 +191,12 @@ namespace Akel.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Members",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    ChatId = table.Column<Guid>(nullable: false),
-                    UserProfileId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Members", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Members_Chats_ChatId",
-                        column: x => x.ChatId,
-                        principalTable: "Chats",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Members_UserProfiles_UserProfileId",
-                        column: x => x.UserProfileId,
-                        principalTable: "UserProfiles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    ChatId = table.Column<Guid>(nullable: false),
-                    UserProfileId = table.Column<Guid>(nullable: false)
+                    ChatId = table.Column<Guid>(nullable: true),
+                    UserProfileId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -206,45 +206,37 @@ namespace Akel.Migrations
                         column: x => x.ChatId,
                         principalTable: "Chats",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Messages_UserProfiles_UserProfileId",
                         column: x => x.UserProfileId,
                         principalTable: "UserProfiles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Subscribers",
+                name: "UserProfileChat",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
-                    ChatId = table.Column<Guid>(nullable: false),
                     UserProfileId = table.Column<Guid>(nullable: false),
-                    AuditionId = table.Column<Guid>(nullable: true)
+                    ChatId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Subscribers", x => x.Id);
+                    table.PrimaryKey("PK_UserProfileChat", x => new { x.UserProfileId, x.ChatId });
                     table.ForeignKey(
-                        name: "FK_Subscribers_Auditions_AuditionId",
-                        column: x => x.AuditionId,
-                        principalTable: "Auditions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Subscribers_Chats_ChatId",
+                        name: "FK_UserProfileChat_Chats_ChatId",
                         column: x => x.ChatId,
                         principalTable: "Chats",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Subscribers_UserProfiles_UserProfileId",
+                        name: "FK_UserProfileChat_UserProfiles_UserProfileId",
                         column: x => x.UserProfileId,
                         principalTable: "UserProfiles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -296,7 +288,7 @@ namespace Akel.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TestId = table.Column<Guid>(nullable: false),
-                    UserProfileId = table.Column<Guid>(nullable: false)
+                    UserProfileId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -312,7 +304,7 @@ namespace Akel.Migrations
                         column: x => x.UserProfileId,
                         principalTable: "UserProfiles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -365,16 +357,6 @@ namespace Akel.Migrations
                 column: "UserProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Members_ChatId",
-                table: "Members",
-                column: "ChatId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Members_UserProfileId",
-                table: "Members",
-                column: "UserProfileId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Messages_ChatId",
                 table: "Messages",
                 column: "ChatId");
@@ -410,11 +392,6 @@ namespace Akel.Migrations
                 column: "AuditionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Subscribers_ChatId",
-                table: "Subscribers",
-                column: "ChatId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Subscribers_UserProfileId",
                 table: "Subscribers",
                 column: "UserProfileId");
@@ -423,6 +400,11 @@ namespace Akel.Migrations
                 name: "IX_Tests_AuditionId",
                 table: "Tests",
                 column: "AuditionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserProfileChat_ChatId",
+                table: "UserProfileChat",
+                column: "ChatId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfiles_IdentityUserId",
@@ -442,9 +424,6 @@ namespace Akel.Migrations
                 name: "Friends");
 
             migrationBuilder.DropTable(
-                name: "Members");
-
-            migrationBuilder.DropTable(
                 name: "Messages");
 
             migrationBuilder.DropTable(
@@ -455,6 +434,9 @@ namespace Akel.Migrations
 
             migrationBuilder.DropTable(
                 name: "Subscribers");
+
+            migrationBuilder.DropTable(
+                name: "UserProfileChat");
 
             migrationBuilder.DropTable(
                 name: "Questions");

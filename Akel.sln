@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassLibrary", "ClassLibrar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akel.Domain.Interface", "Akel.Domain.Interface\Akel.Domain.Interface.csproj", "{6DB0C729-B6AD-41DE-832B-C577BF9AA63A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AkelAPI", "AkelAPI\AkelAPI.csproj", "{8DECB31A-EC25-4A9C-9A20-D84A54DF66FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{6DB0C729-B6AD-41DE-832B-C577BF9AA63A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DB0C729-B6AD-41DE-832B-C577BF9AA63A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DB0C729-B6AD-41DE-832B-C577BF9AA63A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DECB31A-EC25-4A9C-9A20-D84A54DF66FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DECB31A-EC25-4A9C-9A20-D84A54DF66FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DECB31A-EC25-4A9C-9A20-D84A54DF66FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DECB31A-EC25-4A9C-9A20-D84A54DF66FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

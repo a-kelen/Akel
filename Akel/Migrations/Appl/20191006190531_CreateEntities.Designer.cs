@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Akel.Migrations
+namespace Akel.Migrations.Appl
 {
     [DbContext(typeof(ApplContext))]
-    [Migration("20191005211106_InitialStudentRegistrationDbMigration")]
-    partial class InitialStudentRegistrationDbMigration
+    [Migration("20191006190531_CreateEntities")]
+    partial class CreateEntities
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -116,37 +116,16 @@ namespace Akel.Migrations
                     b.ToTable("Friends");
                 });
 
-            modelBuilder.Entity("Akel.Domain.Core.Member", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ChatId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserProfileId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatId");
-
-                    b.HasIndex("UserProfileId");
-
-                    b.ToTable("Members");
-                });
-
             modelBuilder.Entity("Akel.Domain.Core.Message", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ChatId")
+                    b.Property<Guid?>("ChatId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("UserProfileId")
+                    b.Property<Guid?>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -219,7 +198,7 @@ namespace Akel.Migrations
                     b.Property<Guid>("TestId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("UserProfileId")
+                    b.Property<Guid?>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -237,20 +216,15 @@ namespace Akel.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AuditionId")
+                    b.Property<Guid>("AuditionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ChatId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserProfileId")
+                    b.Property<Guid?>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AuditionId");
-
-                    b.HasIndex("ChatId");
 
                     b.HasIndex("UserProfileId");
 
@@ -311,6 +285,21 @@ namespace Akel.Migrations
                     b.HasIndex("IdentityUserId");
 
                     b.ToTable("UserProfiles");
+                });
+
+            modelBuilder.Entity("Akel.Domain.Core.UserProfileChat", b =>
+                {
+                    b.Property<Guid?>("UserProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ChatId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UserProfileId", "ChatId");
+
+                    b.HasIndex("ChatId");
+
+                    b.ToTable("UserProfileChat");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
@@ -416,34 +405,15 @@ namespace Akel.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Akel.Domain.Core.Member", b =>
-                {
-                    b.HasOne("Akel.Domain.Core.Chat", "Chat")
-                        .WithMany("Members")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Akel.Domain.Core.UserProfile", "UserProfile")
-                        .WithMany("Members")
-                        .HasForeignKey("UserProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Akel.Domain.Core.Message", b =>
                 {
                     b.HasOne("Akel.Domain.Core.Chat", "Chat")
                         .WithMany("Messages")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ChatId");
 
                     b.HasOne("Akel.Domain.Core.UserProfile", "UserProfile")
                         .WithMany("Messages")
-                        .HasForeignKey("UserProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserProfileId");
                 });
 
             modelBuilder.Entity("Akel.Domain.Core.Post", b =>
@@ -472,28 +442,20 @@ namespace Akel.Migrations
 
                     b.HasOne("Akel.Domain.Core.UserProfile", "UserProfile")
                         .WithMany("Results")
-                        .HasForeignKey("UserProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserProfileId");
                 });
 
             modelBuilder.Entity("Akel.Domain.Core.Subscriber", b =>
                 {
-                    b.HasOne("Akel.Domain.Core.Audition", null)
+                    b.HasOne("Akel.Domain.Core.Audition", "Audition")
                         .WithMany("Subscribers")
-                        .HasForeignKey("AuditionId");
-
-                    b.HasOne("Akel.Domain.Core.Chat", "Chat")
-                        .WithMany()
-                        .HasForeignKey("ChatId")
+                        .HasForeignKey("AuditionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Akel.Domain.Core.UserProfile", "UserProfile")
                         .WithMany("Subscribers")
-                        .HasForeignKey("UserProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserProfileId");
                 });
 
             modelBuilder.Entity("Akel.Domain.Core.Test", b =>
@@ -510,6 +472,21 @@ namespace Akel.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
                         .WithMany()
                         .HasForeignKey("IdentityUserId");
+                });
+
+            modelBuilder.Entity("Akel.Domain.Core.UserProfileChat", b =>
+                {
+                    b.HasOne("Akel.Domain.Core.Chat", "Chat")
+                        .WithMany("Users")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Akel.Domain.Core.UserProfile", "UserProfile")
+                        .WithMany("Chats")
+                        .HasForeignKey("UserProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
