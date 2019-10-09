@@ -30,7 +30,7 @@ namespace Akel.Domain.Core
         public bool Sex { get; set; }
         public byte[] Avatar { get; set; }
         public Guid UserId { get; set; }
-        public IdentityUser IdentityUser { get; set; }
+        public User User { get; set; }
         public List<Audition> Auditions { get; set; }
         public List<Friend> Friends { get; set; }
         public List<Comment> Comments { get; set; }

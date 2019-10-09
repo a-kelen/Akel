@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Akel.Infrastructure.Data;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.OpenApi.Models;
+using Akel.Domain.Core;
 
 namespace Akel
 {
@@ -45,8 +46,9 @@ namespace Akel
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Values Api", Version = "v1" });
             });
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<ApplContext>();
+            
             services.AddControllersWithViews();
             services.AddRazorPages();
            
