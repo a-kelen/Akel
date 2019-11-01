@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Akel.Domain.Interface;
+using System.Threading.Tasks;
+
 namespace Akel.Infrastructure.Data
 {
     public class CommentRepository:IRepository<Comment>
@@ -13,29 +15,29 @@ namespace Akel.Infrastructure.Data
         {
             this.db = context;
         }
-        public void Create(Comment item)
+        public async Task Create(Comment item)
         {
             this.db.Comments.Add(item);
         }
 
-        public void Delete(int id)
+        public async Task Delete(Guid id)
         {
-            Comment item = db.Comments.Find(id);
+            Comment item = await db.Comments.FindAsync(id);
             if (item != null)
                 db.Comments.Remove(item);
         }
 
-        public Comment Get(int id)
+        public async Task<Comment> Get(Guid id)
         {
-            return db.Comments.Find(id);
+            return await db.Comments.FindAsync(id);
         }
 
-        public IEnumerable<Comment> GetAll()
+        public async Task<IEnumerable<Comment>> GetAll()
         {
             return db.Comments;
         }
 
-        public void Update(Comment item)
+        public async Task Update(Comment item)
         {
             db.Entry(item).State = EntityState.Modified;
         }

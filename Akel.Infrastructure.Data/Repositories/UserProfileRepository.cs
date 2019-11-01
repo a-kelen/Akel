@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Akel.Domain.Core;
 using Akel.Domain.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -14,30 +15,30 @@ namespace Akel.Infrastructure.Data
         {
             this.db = context;
         }
-        public void Create(UserProfile item)
+        public async Task Create(UserProfile item)
         {
             this.db.UserProfiles.Add(item);
         }
 
-        public void Delete(int id)
+        public async Task Delete(Guid id)
         {
-            UserProfile item = db.UserProfiles.Find(id);
+            UserProfile item = await db.UserProfiles.FindAsync(id);
             if (item != null)
                 db.UserProfiles.Remove(item);
         }
 
-        public UserProfile Get(int id)
+        public async Task<UserProfile> Get(Guid id)
         {
-            return db.UserProfiles.Find(id);
+            return await db.UserProfiles.FindAsync(id);
         }
 
-        public IEnumerable<UserProfile> GetAll()
+        public async Task<IEnumerable<UserProfile>> GetAll()
         {
             return db.UserProfiles;
             ;
         }
 
-        public void Update(UserProfile item)
+        public async Task Update(UserProfile item)
         {
             db.Entry(item).State = EntityState.Modified;
         }

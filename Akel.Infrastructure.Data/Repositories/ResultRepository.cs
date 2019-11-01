@@ -4,39 +4,40 @@ using System.Text;
 using Akel.Domain.Interface;
 using Akel.Domain.Core;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Akel.Infrastructure.Data
 {
-    public class ResultRepository
+    public class ResultRepository:IRepository<Result>
     {
         private ApplContext db;
         public ResultRepository(ApplContext context)
         {
             this.db = context;
         }
-        public void Create(Result item)
+        public async Task Create(Result item)
         {
             this.db.Results.Add(item);
         }
 
-        public void Delete(int id)
+        public async Task Delete(Guid id)
         {
-            Result item = db.Results.Find(id);
+            Result item = await db.Results.FindAsync(id);
             if (item != null)
                 db.Results.Remove(item);
         }
 
-        public Result Get(int id)
+        public async Task<Result> Get(Guid id)
         {
-            return db.Results.Find(id);
+            return await db.Results.FindAsync(id);
         }
 
-        public IEnumerable<Result> GetAll()
+        public async Task<IEnumerable<Result>> GetAll()
         {
             return db.Results;
         }
 
-        public void Update(Result item)
+        public async Task Update(Result item)
         {
             db.Entry(item).State = EntityState.Modified;
         }

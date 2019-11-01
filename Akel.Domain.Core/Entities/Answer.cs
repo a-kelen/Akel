@@ -9,10 +9,11 @@ namespace Akel.Domain.Core
     public class Answer
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
         public Guid Id { get; set; }
         public Guid QuestionId { get; set; }
         public Question Question { get; set; }
+        public string Value { get; set; }
+
 
     }
 }

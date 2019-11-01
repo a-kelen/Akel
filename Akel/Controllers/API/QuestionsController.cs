@@ -14,25 +14,25 @@ namespace Akel.Controllers.API
     [ApiController]
     public class QuestionsController : ControllerBase
     {
-        private readonly ApplContext _context;
+        private readonly UnitOfWork _context;
 
         public QuestionsController(ApplContext context)
         {
-            _context = context;
+            _context = new UnitOfWork ();
         }
 
         // GET: api/Questions
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Question>>> GetQuestions()
         {
-            return await _context.Questions.ToListAsync();
+            return Ok(await _context.Questions.GetAll());
         }
 
         // GET: api/Questions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Question>> GetQuestion(Guid id)
         {
-            var question = await _context.Questions.FindAsync(id);
+            var question = await _context.Questions.Get(id);
 
             if (question == null)
             {
@@ -53,11 +53,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            _context.Entry(question).State = EntityState.Modified;
+            await _context.Questions.Update(question);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,8 +80,8 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Question>> PostQuestion(Question question)
         {
-            _context.Questions.Add(question);
-            await _context.SaveChangesAsync();
+            await _context.Questions.Create(question);
+            await _context.Save();
 
             return CreatedAtAction("GetQuestion", new { id = question.Id }, question);
         }
@@ -90,21 +90,21 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Question>> DeleteQuestion(Guid id)
         {
-            var question = await _context.Questions.FindAsync(id);
+            var question = await _context.Questions.Get(id);
             if (question == null)
             {
                 return NotFound();
             }
 
-            _context.Questions.Remove(question);
-            await _context.SaveChangesAsync();
+            await _context.Questions.Delete(question.Id);
+            await _context.Save();
 
             return question;
         }
 
         private bool QuestionExists(Guid id)
         {
-            return _context.Questions.Any(e => e.Id == id);
+            return _context.Questions.Get(id) == null;
         }
     }
 }

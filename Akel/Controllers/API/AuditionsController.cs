@@ -14,25 +14,26 @@ namespace Akel.Controllers.API
     [ApiController]
     public class AuditionsController : ControllerBase
     {
-        private readonly ApplContext _context;
+        private readonly UnitOfWork _context;
 
         public AuditionsController(ApplContext context)
         {
-            _context = context;
+            _context = new UnitOfWork();
         }
 
         // GET: api/Auditions
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Audition>>> GetAuditions()
         {
-            return await _context.Auditions.ToListAsync();
+            var res =  await _context.Auditions.GetAll();
+            return Ok(res);
         }
 
         // GET: api/Auditions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Audition>> GetAudition(Guid id)
         {
-            var audition = await _context.Auditions.FindAsync(id);
+            var audition = await _context.Auditions.Get(id);
 
             if (audition == null)
             {
@@ -53,11 +54,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            _context.Entry(audition).State = EntityState.Modified;
+            await _context.Auditions.Update(audition);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,8 +81,8 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Audition>> PostAudition(Audition audition)
         {
-            _context.Auditions.Add(audition);
-            await _context.SaveChangesAsync();
+            await _context.Auditions.Create(audition);
+            await _context.Save();
 
             return CreatedAtAction("GetAudition", new { id = audition.Id }, audition);
         }
@@ -90,21 +91,21 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Audition>> DeleteAudition(Guid id)
         {
-            var audition = await _context.Auditions.FindAsync(id);
+            var audition = await _context.Auditions.Get(id);
             if (audition == null)
             {
                 return NotFound();
             }
 
-            _context.Auditions.Remove(audition);
-            await _context.SaveChangesAsync();
+            await _context.Auditions.Delete(audition.Id);
+            await _context.Save();
 
             return audition;
         }
 
         private bool AuditionExists(Guid id)
         {
-            return _context.Auditions.Any(e => e.Id == id);
+            return _context.Auditions.Get(id) == null;
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
+﻿<Project Sdk="Microsoft.NET.Sdk.Web" ToolsVersion="15.0">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UserSecretsId>aspnet-Akel-2674602F-B485-4279-935B-9580D93281A8</UserSecretsId>
+    <FileUpgradeFlags>40</FileUpgradeFlags>
+    <UpgradeBackupLocation>C:\Users\Hp\source\repos\a-kelen\Akel\Backup\Akel\</UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Akel\20191005214940_init2.cs" />
     <Compile Remove="Akel\20191005214940_init2.Designer.cs" />
@@ -26,30 +27,33 @@
     <Compile Remove="Data\Migrations\20191005201948_AddEntities.Designer.cs" />
     <Compile Remove="Migrations\20191005211106_InitialStudentRegistrationDbMigration.cs" />
     <Compile Remove="Migrations\20191005211106_InitialStudentRegistrationDbMigration.Designer.cs" />
+    <Compile Remove="Migrations\Appl\20191028163401_m1.cs" />
+    <Compile Remove="Migrations\Appl\20191028163401_m1.Designer.cs" />
   </ItemGroup>
-
-
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc3" />
   </ItemGroup>
-
-
   <ItemGroup>
     <ProjectReference Include="..\Akel.Domain.Core\Akel.Domain.Core.csproj" />
     <ProjectReference Include="..\Akel.Infrastructure.Data\Akel.Infrastructure.Data.csproj" />
+    <ProjectReference Include="..\Akel.Infrastructure.Services\Akel.Infrastructure.Services.csproj" />
+    <ProjectReference Include="..\Akel.Services.Interfaces\Akel.Services.Interfaces.csproj" />
   </ItemGroup>
-
-
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
   </ItemGroup>
-
 </Project>

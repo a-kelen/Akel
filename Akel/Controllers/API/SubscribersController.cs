@@ -14,25 +14,25 @@ namespace Akel.Controllers.API
     [ApiController]
     public class SubscribersController : ControllerBase
     {
-        private readonly ApplContext _context;
+        private readonly UnitOfWork _context;
 
         public SubscribersController(ApplContext context)
         {
-            _context = context;
+            _context = new UnitOfWork();
         }
 
         // GET: api/Subscribers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Subscriber>>> GetSubscribers()
         {
-            return await _context.Subscribers.ToListAsync();
+            return Ok(await _context.Subscribers.GetAll());
         }
 
         // GET: api/Subscribers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Subscriber>> GetSubscriber(Guid id)
         {
-            var subscriber = await _context.Subscribers.FindAsync(id);
+            var subscriber = await _context.Subscribers.Get(id);
 
             if (subscriber == null)
             {
@@ -53,11 +53,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            _context.Entry(subscriber).State = EntityState.Modified;
+            await _context.Subscribers.Update(subscriber);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,8 +80,8 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Subscriber>> PostSubscriber(Subscriber subscriber)
         {
-            _context.Subscribers.Add(subscriber);
-            await _context.SaveChangesAsync();
+           await _context.Subscribers.Create(subscriber);
+            await _context.Save();
 
             return CreatedAtAction("GetSubscriber", new { id = subscriber.Id }, subscriber);
         }
@@ -90,21 +90,21 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Subscriber>> DeleteSubscriber(Guid id)
         {
-            var subscriber = await _context.Subscribers.FindAsync(id);
+            var subscriber = await _context.Subscribers.Get(id);
             if (subscriber == null)
             {
                 return NotFound();
             }
 
-            _context.Subscribers.Remove(subscriber);
-            await _context.SaveChangesAsync();
+            await _context.Subscribers.Delete(subscriber.Id);
+            await _context.Save();
 
             return subscriber;
         }
 
         private bool SubscriberExists(Guid id)
         {
-            return _context.Subscribers.Any(e => e.Id == id);
+            return _context.Subscribers.Get(id) == null;
         }
     }
 }

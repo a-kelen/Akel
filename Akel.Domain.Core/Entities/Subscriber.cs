@@ -9,7 +9,7 @@ namespace Akel.Domain.Core
     public class Subscriber
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
+        
         public Guid Id { get; set; }
         public Guid AuditionId { get; set; }
         public Audition Audition { get; set; }

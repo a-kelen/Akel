@@ -9,7 +9,7 @@ namespace Akel.Domain.Core
     public class Result
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
+        
         public Guid Id { get; set; }
         public Guid TestId { get; set; }
         public Test Test { get; set; }

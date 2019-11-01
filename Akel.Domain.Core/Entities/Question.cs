@@ -13,7 +13,7 @@ namespace Akel.Domain.Core
             Answers = new List<Answer>();
         }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
+        
         public Guid Id { get; set; }
         public Guid TestId { get; set; }
         public Test Test { get; set; }

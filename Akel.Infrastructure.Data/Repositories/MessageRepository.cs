@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Akel.Domain.Interface;
+using System.Threading.Tasks;
+
 namespace Akel.Infrastructure.Data
 {
     public class MessageRepository:IRepository<Message>
@@ -13,29 +15,29 @@ namespace Akel.Infrastructure.Data
         {
             this.db = context;
         }
-        public void Create(Message item)
+        public async Task Create(Message item)
         {
             this.db.Messages.Add(item);
         }
 
-        public void Delete(int id)
+        public async Task Delete(Guid id)
         {
-            Message item = db.Messages.Find(id);
+            Message item = await db.Messages.FindAsync(id);
             if (item != null)
                 db.Messages.Remove(item);
         }
 
-        public Message Get(int id)
+        public async Task<Message> Get(Guid id)
         {
-            return db.Messages.Find(id);
+            return await db.Messages.FindAsync(id);
         }
 
-        public IEnumerable<Message> GetAll()
+        public async Task<IEnumerable<Message>> GetAll()
         {
             return db.Messages;
         }
 
-        public void Update(Message item)
+        public async Task Update(Message item)
         {
             db.Entry(item).State = EntityState.Modified;
         }

@@ -4,6 +4,7 @@ using System.Text;
 using Akel.Domain.Interface;
 using Akel.Domain.Core;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Akel.Infrastructure.Data
 {
@@ -14,29 +15,29 @@ namespace Akel.Infrastructure.Data
         {
             this.db = context;
         }
-        public void Create(Test item)
+        public async Task Create(Test item)
         {
             this.db.Tests.Add(item);
         }
 
-        public void Delete(int id)
+        public async Task Delete(Guid id)
         {
-            Test item = db.Tests.Find(id);
+            Test item =await db.Tests.FindAsync(id);
             if (item != null)
                 db.Tests.Remove(item);
         }
 
-        public Test Get(int id)
+        public async Task<Test> Get(Guid id)
         {
-            return db.Tests.Find(id);
+            return await db.Tests.FindAsync(id);
         }
 
-        public IEnumerable<Test> GetAll()
+        public async Task<IEnumerable<Test>> GetAll()
         {
             return db.Tests;
         }
 
-        public void Update(Test item)
+        public async Task Update(Test item)
         {
             db.Entry(item).State = EntityState.Modified;
         }

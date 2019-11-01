@@ -2,14 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Akel.Infrastructure.Data
 {
-    class UnitOfWork:IDisposable
+    public class UnitOfWork:IDisposable
     {
         public UnitOfWork()
         {
-            //db = new AppContext();
+            this.db = new ApplContext();
         }
         ApplContext db;
         AnswerRepository AnswerRepository;
@@ -23,6 +24,7 @@ namespace Akel.Infrastructure.Data
         ResultRepository ResultRepository;
         TestRepository TestRepository;
         UserProfileRepository UserProfileRepository;
+        SubscriberRepository SubscriberRepository;
 
         public AnswerRepository Answers { 
             get {
@@ -99,10 +101,18 @@ namespace Akel.Infrastructure.Data
                 return UserProfileRepository ?? (UserProfileRepository = new UserProfileRepository(db));
             }
         }
-
-        public void Save()
+        public SubscriberRepository Subscribers
         {
-            db.SaveChanges();
+            get
+            {
+                return SubscriberRepository ?? (SubscriberRepository = new SubscriberRepository(db));
+            }
+        }
+
+
+        public async Task Save()
+        {
+            db.SaveChangesAsync();
         }
 
         private bool disposed = false;

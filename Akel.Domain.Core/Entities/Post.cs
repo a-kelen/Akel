@@ -13,10 +13,12 @@ namespace Akel.Domain.Core
             Comments = new List<Comment>();
         }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
+        
         public Guid Id { get; set; }
-        public Guid CommentId { get; set; }
+        public Guid AuditionId { get; set; }
         public Audition Audition { get; set; }
+        public Guid PhotoId { get; set; }
+        public Photo Photo { get; set; }
         public List<Comment> Comments { get; set; }
     }
 }

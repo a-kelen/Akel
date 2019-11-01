@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Akel.Domain.Interface;
+using System.Threading.Tasks;
+
 namespace Akel.Infrastructure.Data
 {
     public class PostRepository:IRepository<Post>
@@ -13,29 +15,29 @@ namespace Akel.Infrastructure.Data
         {
             this.db = context;
         }
-        public void Create(Post item)
+        public async Task Create(Post item)
         {
             this.db.Posts.Add(item);
         }
 
-        public void Delete(int id)
+        public async Task Delete(Guid id)
         {
-            Post item = db.Posts.Find(id);
+            Post item = await db.Posts.FindAsync(id);
             if (item != null)
                 db.Posts.Remove(item);
         }
 
-        public Post Get(int id)
+        public async Task<Post> Get(Guid id)
         {
-            return db.Posts.Find(id);
+            return await db.Posts.FindAsync(id);
         }
 
-        public IEnumerable<Post> GetAll()
+        public async Task<IEnumerable<Post>> GetAll()
         {
             return db.Posts;
         }
 
-        public void Update(Post item)
+        public async  Task Update(Post item)
         {
             db.Entry(item).State = EntityState.Modified;
         }

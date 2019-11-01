@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Akel.Domain.Core;
 using Akel.Domain.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -14,29 +15,29 @@ namespace Akel.Infrastructure.Data
         {
             this.db = context;
         }
-        public void Create(Chat item)
+        public async Task Create(Chat item)
         {
            this.db.Chats.Add(item);
         }
 
-        public void Delete(int id)
+        public async Task Delete(Guid id)
         {
-            Chat chat = db.Chats.Find(id);
+            Chat chat = await db.Chats.FindAsync(id);
             if (chat != null)
                 db.Chats.Remove(chat);
         }
 
-        public Chat Get(int id)
+        public async Task<Chat> Get(Guid id)
         {
-            return db.Chats.Find(id);
+            return await db.Chats.FindAsync(id);
         }
 
-        public IEnumerable<Chat> GetAll()
+        public async Task<IEnumerable<Chat>> GetAll()
         {
-            return db.Chats;
+            return  db.Chats;
         }
 
-        public void Update(Chat item)
+        public async Task Update(Chat item)
         {
             db.Entry(item).State = EntityState.Modified;
         }

@@ -14,7 +14,7 @@ namespace Akel.Domain.Core
             Results = new List<Result>();
         }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
+        
         public Guid Id { get; set; }
         public Guid AuditionId { get; set; }
         public Audition Audition { get; set; }

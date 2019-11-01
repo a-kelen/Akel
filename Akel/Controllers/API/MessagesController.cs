@@ -14,25 +14,25 @@ namespace Akel.Controllers.API
     [ApiController]
     public class MessagesController : ControllerBase
     {
-        private readonly ApplContext _context;
+        private readonly UnitOfWork _context;
 
         public MessagesController(ApplContext context)
         {
-            _context = context;
+            _context = new UnitOfWork();
         }
 
         // GET: api/Messages
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Message>>> GetMessages()
         {
-            return await _context.Messages.ToListAsync();
+            return Ok( await _context.Messages.GetAll());
         }
 
         // GET: api/Messages/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Message>> GetMessage(Guid id)
         {
-            var message = await _context.Messages.FindAsync(id);
+            var message = await _context.Messages.Get(id);
 
             if (message == null)
             {
@@ -53,11 +53,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            _context.Entry(message).State = EntityState.Modified;
+            await _context.Messages.Update(message);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,8 +80,8 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Message>> PostMessage(Message message)
         {
-            _context.Messages.Add(message);
-            await _context.SaveChangesAsync();
+            await _context.Messages.Create(message);
+            await _context.Save();
 
             return CreatedAtAction("GetMessage", new { id = message.Id }, message);
         }
@@ -90,21 +90,21 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Message>> DeleteMessage(Guid id)
         {
-            var message = await _context.Messages.FindAsync(id);
+            var message = await _context.Messages.Get(id);
             if (message == null)
             {
                 return NotFound();
             }
 
-            _context.Messages.Remove(message);
-            await _context.SaveChangesAsync();
+            await _context.Messages.Delete(message.Id);
+            await _context.Save();
 
             return message;
         }
 
         private bool MessageExists(Guid id)
         {
-            return _context.Messages.Any(e => e.Id == id);
+            return _context.Messages.Get(id) == null ;
         }
     }
 }

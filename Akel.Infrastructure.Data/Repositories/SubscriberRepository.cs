@@ -4,39 +4,40 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Akel.Infrastructure.Data.Repositories
+namespace Akel.Infrastructure.Data
 {
-    class SubscriberRepository:IRepository<Subscriber>
+    public class SubscriberRepository:IRepository<Subscriber>
     {
         private ApplContext db;
         public SubscriberRepository(ApplContext context)
         {
             this.db = context;
         }
-        public void Create(Subscriber item)
+        public async Task Create(Subscriber item)
         {
             this.db.Subscribers.Add(item);
         }
 
-        public void Delete(int id)
+        public async Task Delete(Guid id)
         {
-            Subscriber item = db.Subscribers.Find(id);
+            Subscriber item = await db.Subscribers.FindAsync(id);
             if (item != null)
                 db.Subscribers.Remove(item);
         }
 
-        public Subscriber Get(int id)
+        public async Task<Subscriber> Get(Guid id)
         {
-            return db.Subscribers.Find(id);
+            return await db.Subscribers.FindAsync(id);
         }
 
-        public IEnumerable<Subscriber> GetAll()
+        public async Task<IEnumerable<Subscriber>> GetAll()
         {
             return db.Subscribers;
         }
 
-        public void Update(Subscriber item)
+        public async Task Update(Subscriber item)
         {
             db.Entry(item).State = EntityState.Modified;
         }

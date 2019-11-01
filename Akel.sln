@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.29324.140
+VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akel", "Akel\Akel.csproj", "{95203D45-E1D6-4C57-9FEB-3833488DCB2D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{2640DF93-7D6F-4030-A1C5-F870E80AAB1D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{0CB0D5A1-3FCA-42D7-A37E-4CB818C9545C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akel", "Akel\Akel.csproj", "{95203D45-E1D6-4C57-9FEB-3833488DCB2D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akel.Domain.Core", "Akel.Domain.Core\Akel.Domain.Core.csproj", "{29BD91F5-5988-464F-8328-B001CF2F5D2E}"
 EndProject
@@ -17,7 +17,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassLibrary", "ClassLibrar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akel.Domain.Interface", "Akel.Domain.Interface\Akel.Domain.Interface.csproj", "{6DB0C729-B6AD-41DE-832B-C577BF9AA63A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AkelAPI", "AkelAPI\AkelAPI.csproj", "{8DECB31A-EC25-4A9C-9A20-D84A54DF66FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AkelAPI", "AkelAPI\AkelAPI.csproj", "{8DECB31A-EC25-4A9C-9A20-D84A54DF66FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akel.Infrastructure.Services", "Akel.Infrastructure.Services\Akel.Infrastructure.Services.csproj", "{523708A4-52FC-4974-BAC0-89F396687229}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{9F23EB1E-555A-4002-AF7F-C03A6D64B7D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akel.Services.Interfaces", "Akel.Services.Interfaces\Akel.Services.Interfaces.csproj", "{A31F7775-0BCA-480A-BD3F-D50918B95E23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +55,14 @@ Global
 		{8DECB31A-EC25-4A9C-9A20-D84A54DF66FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DECB31A-EC25-4A9C-9A20-D84A54DF66FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DECB31A-EC25-4A9C-9A20-D84A54DF66FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{523708A4-52FC-4974-BAC0-89F396687229}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{523708A4-52FC-4974-BAC0-89F396687229}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{523708A4-52FC-4974-BAC0-89F396687229}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{523708A4-52FC-4974-BAC0-89F396687229}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A31F7775-0BCA-480A-BD3F-D50918B95E23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A31F7775-0BCA-480A-BD3F-D50918B95E23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A31F7775-0BCA-480A-BD3F-D50918B95E23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A31F7775-0BCA-480A-BD3F-D50918B95E23}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,6 +72,8 @@ Global
 		{60C00577-BA30-4203-9F85-C4592C75E3BD} = {0CB0D5A1-3FCA-42D7-A37E-4CB818C9545C}
 		{623C3C43-FBB0-41E3-A607-DAFC5633F1C3} = {0CB0D5A1-3FCA-42D7-A37E-4CB818C9545C}
 		{6DB0C729-B6AD-41DE-832B-C577BF9AA63A} = {2640DF93-7D6F-4030-A1C5-F870E80AAB1D}
+		{523708A4-52FC-4974-BAC0-89F396687229} = {0CB0D5A1-3FCA-42D7-A37E-4CB818C9545C}
+		{A31F7775-0BCA-480A-BD3F-D50918B95E23} = {9F23EB1E-555A-4002-AF7F-C03A6D64B7D8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E09D5733-FB46-4042-AE82-2745866631F7}

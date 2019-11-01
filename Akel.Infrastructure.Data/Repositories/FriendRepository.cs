@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Akel.Domain.Interface;
+using System.Threading.Tasks;
+
 namespace Akel.Infrastructure.Data
 {
     public class FriendRepository:IRepository<Friend>
@@ -13,29 +15,29 @@ namespace Akel.Infrastructure.Data
         {
             this.db = context;
         }
-        public void Create(Friend item)
+        public async Task Create(Friend item)
         {
             this.db.Friends.Add(item);
         }
 
-        public void Delete(int id)
+        public async Task Delete(Guid id)
         {
-            Friend item = db.Friends.Find(id);
+            Friend item = await db.Friends.FindAsync(id);
             if (item != null)
                 db.Friends.Remove(item);
         }
 
-        public Friend Get(int id)
+        public async Task<Friend> Get(Guid id)
         {
-            return db.Friends.Find(id);
+            return await db.Friends.FindAsync(id);
         }
 
-        public IEnumerable<Friend> GetAll()
+        public async Task<IEnumerable<Friend>> GetAll()
         {
             return db.Friends;
         }
 
-        public void Update(Friend item)
+        public async Task Update(Friend item)
         {
             db.Entry(item).State = EntityState.Modified;
         }

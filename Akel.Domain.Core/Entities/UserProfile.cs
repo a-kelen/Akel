@@ -22,14 +22,14 @@ namespace Akel.Domain.Core
             Messages = new List<Message>();
         }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
+        
         public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime Birthday { get; set; }
         public bool Sex { get; set; }
-        public byte[] Avatar { get; set; }
-        public Guid UserId { get; set; }
+       // public byte[] Avatar { get; set; }
+        public string UserId { get; set; }
         public User User { get; set; }
         public List<Audition> Auditions { get; set; }
         public List<Friend> Friends { get; set; }

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Akel.Domain.Core\Akel.Domain.Core.csproj" />
+    <ProjectReference Include="..\Akel.Domain.Interface\Akel.Domain.Interface.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -16,6 +16,15 @@ using Akel.Infrastructure.Data;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.OpenApi.Models;
 using Akel.Domain.Core;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using AutoMapper;
+using Akel.Infrastructure.Data.DTO;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+using Microsoft.AspNetCore.Mvc;
+using Akel.Infrastructure.Data.Signals;
+using Akel.Services.Interfaces;
+using Akel.Infrastructure.Services;
 
 namespace Akel
 {
@@ -24,7 +33,9 @@ namespace Akel
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            
         }
+        
 
         public IConfiguration Configuration { get; }
 
@@ -32,8 +43,7 @@ namespace Akel
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<ApplContext>(options =>
             {
                 options.UseSqlServer( Configuration.GetConnectionString("DefaultConnection"),
@@ -42,20 +52,53 @@ namespace Akel
                         sqlServerOptions.MigrationsAssembly("Akel");
                     });
             });
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Values Api", Version = "v1" });
             });
-            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+          
+            services.AddDefaultIdentity<User>()
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplContext>();
             
-            services.AddControllersWithViews();
-            services.AddRazorPages();
-           
-        }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(options =>
+                    {
+                        options.RequireHttpsMetadata = false;
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidIssuer = AuthOptions.ISSUER,
+                            ValidateAudience = true,
+                            ValidAudience = AuthOptions.AUDIENCE,
+                            ValidateLifetime = true,
+                            IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                            ValidateIssuerSigningKey = true,
+                        };
+                    });
+
+            services.AddControllersWithViews().SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddRazorPages();
+            services.AddAutoMapper(typeof(Startup));
+            services.AddSignalR();
+
+            services.AddTransient<UnitOfWork>();
+            services.AddTransient<iFriendService, FriendService>();
+
+            //-----------------------------------------------------------------------\\
+        }
+       
+        
+        
+        public void Configure(IApplicationBuilder app,
+                              IWebHostEnvironment env,
+                              UserManager<User> userManager,
+                              RoleManager<IdentityRole> roleManager)
         {
             if (env.IsDevelopment())
             {
@@ -65,7 +108,7 @@ namespace Akel
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+               
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
@@ -73,8 +116,7 @@ namespace Akel
 
             app.UseSwagger();
 
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
+           
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
@@ -83,7 +125,7 @@ namespace Akel
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+            UserInitializer.SeedData(userManager, roleManager);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -91,7 +133,12 @@ namespace Akel
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chat");
+            });
 
-        }
+
+        }  
     }
 }

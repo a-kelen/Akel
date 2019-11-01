@@ -14,25 +14,25 @@ namespace Akel.Controllers.API
     [ApiController]
     public class FriendsController : ControllerBase
     {
-        private readonly ApplContext _context;
+        private readonly UnitOfWork _context;
 
         public FriendsController(ApplContext context)
         {
-            _context = context;
+            _context = new UnitOfWork();
         }
 
         // GET: api/Friends
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Friend>>> GetFriends()
         {
-            return await _context.Friends.ToListAsync();
+            return Ok(await _context.Friends.GetAll());
         }
 
         // GET: api/Friends/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Friend>> GetFriend(Guid id)
         {
-            var friend = await _context.Friends.FindAsync(id);
+            var friend = await _context.Friends.Get(id);
 
             if (friend == null)
             {
@@ -53,11 +53,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            _context.Entry(friend).State = EntityState.Modified;
+            await  _context.Friends.Update(friend);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,8 +80,8 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Friend>> PostFriend(Friend friend)
         {
-            _context.Friends.Add(friend);
-            await _context.SaveChangesAsync();
+            await _context.Friends.Create(friend);
+            await _context.Save();
 
             return CreatedAtAction("GetFriend", new { id = friend.Id }, friend);
         }
@@ -90,21 +90,21 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Friend>> DeleteFriend(Guid id)
         {
-            var friend = await _context.Friends.FindAsync(id);
+            var friend = await _context.Friends.Get(id);
             if (friend == null)
             {
                 return NotFound();
             }
 
-            _context.Friends.Remove(friend);
-            await _context.SaveChangesAsync();
+            await _context.Friends.Delete(friend.Id);
+            await _context.Save();
 
             return friend;
         }
 
         private bool FriendExists(Guid id)
         {
-            return _context.Friends.Any(e => e.Id == id);
+            return _context.Friends.Get(id) == null;
         }
     }
 }

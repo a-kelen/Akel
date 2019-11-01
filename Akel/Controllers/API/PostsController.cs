@@ -14,25 +14,25 @@ namespace Akel.Controllers.API
     [ApiController]
     public class PostsController : ControllerBase
     {
-        private readonly ApplContext _context;
+        private readonly UnitOfWork _context;
 
         public PostsController(ApplContext context)
         {
-            _context = context;
+            _context = new UnitOfWork();
         }
 
         // GET: api/Posts
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Post>>> GetPosts()
         {
-            return await _context.Posts.ToListAsync();
+            return Ok( await _context.Posts.GetAll());
         }
 
         // GET: api/Posts/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Post>> GetPost(Guid id)
         {
-            var post = await _context.Posts.FindAsync(id);
+            var post = await _context.Posts.Get(id);
 
             if (post == null)
             {
@@ -53,11 +53,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            _context.Entry(post).State = EntityState.Modified;
+            await _context.Posts.Update(post);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,8 +80,8 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Post>> PostPost(Post post)
         {
-            _context.Posts.Add(post);
-            await _context.SaveChangesAsync();
+            await _context.Posts.Create(post);
+            await _context.Save();
 
             return CreatedAtAction("GetPost", new { id = post.Id }, post);
         }
@@ -90,21 +90,21 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Post>> DeletePost(Guid id)
         {
-            var post = await _context.Posts.FindAsync(id);
+            var post = await _context.Posts.Get(id);
             if (post == null)
             {
                 return NotFound();
             }
 
-            _context.Posts.Remove(post);
-            await _context.SaveChangesAsync();
+            await _context.Posts.Delete(post.Id);
+            await _context.Save();
 
             return post;
         }
 
         private bool PostExists(Guid id)
         {
-            return _context.Posts.Any(e => e.Id == id);
+            return _context.Posts.Get(id) == null;
         }
     }
 }

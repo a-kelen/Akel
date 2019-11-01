@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Akel.Domain.Interface;
+using System.Threading.Tasks;
+
 namespace Akel.Infrastructure.Data
 {
     public class AuditionRepository:IRepository<Audition>
@@ -13,29 +15,29 @@ namespace Akel.Infrastructure.Data
         {
             this.db = context;
         }
-        public void Create(Audition item)
+        public async Task Create(Audition item)
         {
             this.db.Auditions.Add(item);
         }
 
-        public void Delete(int id)
+        public async Task Delete(Guid id)
         {
-            Audition item = db.Auditions.Find(id);
+            Audition item = await  db.Auditions.FindAsync(id);
             if (item != null)
                 db.Auditions.Remove(item);
         }
 
-        public Audition Get(int id)
+        public async Task<Audition> Get(Guid id)
         {
-            return db.Auditions.Find(id);
+            return await db.Auditions.FindAsync(id);
         }
 
-        public IEnumerable<Audition> GetAll()
+        public async Task<IEnumerable<Audition>> GetAll()
         {
             return db.Auditions;
         }
 
-        public void Update(Audition item)
+        public async Task Update(Audition item)
         {
             db.Entry(item).State = EntityState.Modified;
         }

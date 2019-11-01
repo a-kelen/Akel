@@ -14,25 +14,26 @@ namespace Akel.Controllers.API
     [ApiController]
     public class ChatsController : ControllerBase
     {
-        private readonly ApplContext _context;
+        private readonly UnitOfWork _context;
 
         public ChatsController(ApplContext context)
         {
-            _context = context;
+            _context = new UnitOfWork();
         }
 
         // GET: api/Chats
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Chat>>> GetChats()
         {
-            return await _context.Chats.ToListAsync();
+            var res =  await _context.Chats.GetAll();
+            return Ok(res);
         }
 
         // GET: api/Chats/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Chat>> GetChat(Guid id)
         {
-            var chat = await _context.Chats.FindAsync(id);
+            var chat = await _context.Chats.Get(id);
 
             if (chat == null)
             {
@@ -53,11 +54,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            _context.Entry(chat).State = EntityState.Modified;
+            await _context.Chats.Update(chat);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,8 +81,8 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Chat>> PostChat(Chat chat)
         {
-            _context.Chats.Add(chat);
-            await _context.SaveChangesAsync();
+            await _context.Chats.Create(chat);
+            await _context.Save();
 
             return CreatedAtAction("GetChat", new { id = chat.Id }, chat);
         }
@@ -90,21 +91,21 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Chat>> DeleteChat(Guid id)
         {
-            var chat = await _context.Chats.FindAsync(id);
+            var chat = await _context.Chats.Get(id);
             if (chat == null)
             {
                 return NotFound();
             }
 
-            _context.Chats.Remove(chat);
-            await _context.SaveChangesAsync();
+            await _context.Chats.Delete(chat.Id);
+            await _context.Save();
 
             return chat;
         }
 
         private bool ChatExists(Guid id)
         {
-            return _context.Chats.Any(e => e.Id == id);
+            return _context.Chats.Get(id) == null;    
         }
     }
 }

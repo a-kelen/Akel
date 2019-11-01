@@ -15,10 +15,9 @@ namespace Akel.Domain.Core
             Tests = new List<Test>();
         }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public byte[] Avatar { get; set; }
+       // public byte[] Avatar { get; set; }
         public Guid UserProfileId { get; set; }
         public UserProfile UserProfile { get; set; }
         public List<Post> Posts { get; set; }

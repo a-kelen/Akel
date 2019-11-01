@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Akel.Domain.Core;
 using Akel.Infrastructure.Data;
+using Akel.Infrastructure.Data.DTO;
+using AutoMapper;
 
 namespace Akel.Controllers.API
 {
@@ -14,32 +16,35 @@ namespace Akel.Controllers.API
     [ApiController]
     public class AnswersController : ControllerBase
     {
-        private readonly ApplContext _context;
-
-        public AnswersController(ApplContext context)
+        private readonly UnitOfWork _context;
+        private readonly IMapper mapper;
+        public AnswersController(ApplContext context,IMapper mapper)
         {
-            _context = context;
+            _context = new UnitOfWork();
+            this.mapper = mapper;
         }
 
         // GET: api/Answers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Answer>>> GetAnswers()
+        public async Task<ActionResult<IEnumerable<AnswerDTO>>> GetAnswers()
         {
-            return await _context.Answers.ToListAsync();
+            var res = await _context.Answers.GetAll();
+            var resDto = mapper.Map<IEnumerable<Answer>, IEnumerable<AnswerDTO>>(res);
+            return Ok(resDto);
         }
 
         // GET: api/Answers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Answer>> GetAnswer(Guid id)
+        public async Task<ActionResult<AnswerDTO>> GetAnswer(Guid id)
         {
-            var answer = await _context.Answers.FindAsync(id);
-
+            var answer = await _context.Answers.Get(id);
+            
             if (answer == null)
             {
                 return NotFound();
             }
-
-            return answer;
+            var answerDto = mapper.Map<Answer, AnswerDTO>(answer);
+            return answerDto;
         }
 
         // PUT: api/Answers/5
@@ -53,11 +58,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            _context.Entry(answer).State = EntityState.Modified;
+            await _context.Answers.Update(answer);  
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,8 +85,8 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Answer>> PostAnswer(Answer answer)
         {
-            _context.Answers.Add(answer);
-            await _context.SaveChangesAsync();
+            await _context.Answers.Create(answer);
+            await _context.Save();
 
             return CreatedAtAction("GetAnswer", new { id = answer.Id }, answer);
         }
@@ -90,21 +95,21 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Answer>> DeleteAnswer(Guid id)
         {
-            var answer = await _context.Answers.FindAsync(id);
+            var answer = await _context.Answers.Get(id);
             if (answer == null)
             {
                 return NotFound();
             }
 
-            _context.Answers.Remove(answer);
-            await _context.SaveChangesAsync();
+            await _context.Answers.Delete(answer.Id);
+            await _context.Save();
 
             return answer;
         }
 
         private bool AnswerExists(Guid id)
         {
-            return _context.Answers.Any(e => e.Id == id);
+            return (_context.Answers.Get(id) == null );
         }
     }
 }

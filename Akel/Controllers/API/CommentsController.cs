@@ -14,25 +14,26 @@ namespace Akel.Controllers.API
     [ApiController]
     public class CommentsController : ControllerBase
     {
-        private readonly ApplContext _context;
+        private readonly UnitOfWork _context;
 
         public CommentsController(ApplContext context)
         {
-            _context = context;
+            _context = new UnitOfWork();
+            
         }
 
         // GET: api/Comments
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
         {
-            return await _context.Comments.ToListAsync();
+            return Ok( await _context.Comments.GetAll());
         }
 
         // GET: api/Comments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Comment>> GetComment(Guid id)
         {
-            var comment = await _context.Comments.FindAsync(id);
+            var comment = await _context.Comments.Get(id);
 
             if (comment == null)
             {
@@ -53,11 +54,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            _context.Entry(comment).State = EntityState.Modified;
+            await _context.Comments.Update(comment);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,8 +81,8 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Comment>> PostComment(Comment comment)
         {
-            _context.Comments.Add(comment);
-            await _context.SaveChangesAsync();
+            await _context.Comments.Create(comment);
+            await _context.Save();
 
             return CreatedAtAction("GetComment", new { id = comment.Id }, comment);
         }
@@ -90,21 +91,21 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Comment>> DeleteComment(Guid id)
         {
-            var comment = await _context.Comments.FindAsync(id);
+            var comment = await _context.Comments.Get(id);
             if (comment == null)
             {
                 return NotFound();
             }
 
-            _context.Comments.Remove(comment);
-            await _context.SaveChangesAsync();
+            await _context.Comments.Delete(comment.Id);
+            await _context.Save();
 
             return comment;
         }
 
         private bool CommentExists(Guid id)
         {
-            return _context.Comments.Any(e => e.Id == id);
+            return _context.Comments.Get(id) == null;
         }
     }
 }

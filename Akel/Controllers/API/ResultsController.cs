@@ -14,25 +14,25 @@ namespace Akel.Controllers.API
     [ApiController]
     public class ResultsController : ControllerBase
     {
-        private readonly ApplContext _context;
+        private readonly UnitOfWork _context;
 
         public ResultsController(ApplContext context)
         {
-            _context = context;
+            _context = new UnitOfWork();
         }
 
         // GET: api/Results
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Result>>> GetResults()
         {
-            return await _context.Results.ToListAsync();
+            return Ok(await _context.Results.GetAll());
         }
 
         // GET: api/Results/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Result>> GetResult(Guid id)
         {
-            var result = await _context.Results.FindAsync(id);
+            var result = await _context.Results.Get(id);
 
             if (result == null)
             {
@@ -53,11 +53,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            _context.Entry(result).State = EntityState.Modified;
+           await _context.Results.Update(result);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,8 +80,8 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Result>> PostResult(Result result)
         {
-            _context.Results.Add(result);
-            await _context.SaveChangesAsync();
+            await _context.Results.Create(result);
+            await _context.Save();
 
             return CreatedAtAction("GetResult", new { id = result.Id }, result);
         }
@@ -90,21 +90,21 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Result>> DeleteResult(Guid id)
         {
-            var result = await _context.Results.FindAsync(id);
+            var result = await _context.Results.Get(id);
             if (result == null)
             {
                 return NotFound();
             }
 
-            _context.Results.Remove(result);
-            await _context.SaveChangesAsync();
+            await _context.Results.Delete(result.Id);
+            await _context.Save();
 
             return result;
         }
 
         private bool ResultExists(Guid id)
         {
-            return _context.Results.Any(e => e.Id == id);
+            return _context.Results.Get(id) == null;
         }
     }
 }
