@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,6 +19,7 @@ namespace Akel.Domain.Core
             Results = new List<Result>();
             Subscribers = new List<Subscriber>();
             Chats = new List<UserProfileChat>();
+            Likes = new List<Like>();
             Messages = new List<Message>();
         }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -38,5 +39,6 @@ namespace Akel.Domain.Core
         public List<Subscriber> Subscribers { get; set; }
         public List<UserProfileChat> Chats { get; set; }
         public List<Message> Messages { get; set; }
+        public List<Like> Likes { get; set; }
     }
 }

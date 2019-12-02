@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,7 +29,13 @@ namespace Akel.Controllers.API
         }
 
         // GET: api/Subscribers/5
-        [HttpGet("{id}")]
+        [HttpGet("byuser/{id}")]
+        public async Task<ActionResult<Subscriber>> GetSubscriberByUser(Guid id)
+        {
+            var res = (await _context.Subscribers.GetAll()).Where(x => x.UserProfileId == id);
+            return Ok(res);
+        }
+        [HttpGet("{id}")] 
         public async Task<ActionResult<Subscriber>> GetSubscriber(Guid id)
         {
             var subscriber = await _context.Subscribers.Get(id);

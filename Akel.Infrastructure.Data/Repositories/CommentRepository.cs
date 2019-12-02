@@ -1,4 +1,4 @@
-﻿using Akel.Domain.Core;
+using Akel.Domain.Core;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -29,12 +29,12 @@ namespace Akel.Infrastructure.Data
 
         public async Task<Comment> Get(Guid id)
         {
-            return await db.Comments.FindAsync(id);
+            return await db.Comments.Include("UserProfile").FirstOrDefaultAsync(x=>x.Id == id);
         }
 
         public async Task<IEnumerable<Comment>> GetAll()
         {
-            return db.Comments;
+            return db.Comments.Include(x => x.UserProfile );
         }
 
         public async Task Update(Comment item)

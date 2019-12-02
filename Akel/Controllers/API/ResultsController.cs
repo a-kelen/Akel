@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,6 +26,12 @@ namespace Akel.Controllers.API
         public async Task<ActionResult<IEnumerable<Result>>> GetResults()
         {
             return Ok(await _context.Results.GetAll());
+        }
+        [HttpGet("byuser/{id}")]
+        public async Task<ActionResult<IEnumerable<Result>>> GetResultsByUser(Guid id)
+        {
+            var res = (await _context.Results.GetAll()).Where(x => x.UserProfileId == id);
+            return Ok(res);
         }
 
         // GET: api/Results/5

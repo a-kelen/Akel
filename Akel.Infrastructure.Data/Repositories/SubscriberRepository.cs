@@ -1,4 +1,4 @@
-﻿using Akel.Domain.Core;
+using Akel.Domain.Core;
 using Akel.Domain.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,6 +18,7 @@ namespace Akel.Infrastructure.Data
         public async Task Create(Subscriber item)
         {
             this.db.Subscribers.Add(item);
+            this.db.SaveChanges();
         }
 
         public async Task Delete(Guid id)

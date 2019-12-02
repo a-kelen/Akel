@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,7 +27,13 @@ namespace Akel.Controllers.API
         {
             return Ok(await _context.Tests.GetAll());
         }
-        
+        [HttpGet("byaudition/{id}")]
+        public async Task<ActionResult<IEnumerable<Test>>> GetTests(Guid id)
+        {
+            var res = (await _context.Tests.GetAll()).Where(x => x.AuditionId == id);
+            return Ok(res);
+        }
+
 
         public class PagedCollectionResponse<T> where T : class
         {
@@ -120,14 +126,39 @@ namespace Akel.Controllers.API
             return NoContent();
         }
 
-        // POST: api/Tests
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPost]
-        public async Task<ActionResult<Test>> PostTest(Test test)
+        
+        public class CreateTestVM
         {
+            public Guid AuditionId { get; set; }
+            public string Title { get; set; }
+            public string Topic { get; set; }
+            public List<Question> Questions { get; set; }
+            public CreateTestVM()
+            {
+                this.Questions = new List<Question>();
+                
+            }
+        }
+        
+        [HttpPost]
+        public async Task<ActionResult<Test>> PostTest(CreateTestVM vm)
+        {
+
+            Test test = new Test
+            {
+                AuditionId = vm.AuditionId,
+                Title = vm.Title,
+                Topic = vm.Topic,
+                Questions = vm.Questions
+            };
             await _context.Tests.Create(test);
             await _context.Save();
+            foreach(var a in test.Questions)
+            {
+               // var c = a.Correct;
+                
+
+            }
 
             return CreatedAtAction("GetTest", new { id = test.Id }, test);
         }

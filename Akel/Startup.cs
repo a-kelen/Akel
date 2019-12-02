@@ -42,8 +42,7 @@ namespace Akel
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            
             services.AddDbContext<ApplContext>(options =>
             {
                 options.UseSqlServer( Configuration.GetConnectionString("DefaultConnection"),
@@ -58,7 +57,7 @@ namespace Akel
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Values Api", Version = "v1" });
             });
           
-            services.AddDefaultIdentity<User>()
+            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplContext>();
             
@@ -90,6 +89,8 @@ namespace Akel
             services.AddTransient<UnitOfWork>();
             services.AddTransient<iFriendService, FriendService>();
 
+            
+            services.AddCors();
             //-----------------------------------------------------------------------\\
         }
        
@@ -115,8 +116,9 @@ namespace Akel
             app.UseStaticFiles();
 
             app.UseSwagger();
+            app.UseCors(builder => builder.AllowAnyOrigin());
 
-           
+
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");

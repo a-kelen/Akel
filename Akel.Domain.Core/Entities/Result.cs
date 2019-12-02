@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
@@ -13,6 +13,7 @@ namespace Akel.Domain.Core
         public Guid Id { get; set; }
         public Guid TestId { get; set; }
         public Test Test { get; set; }
+        public double Value { get; set; }
         public Guid? UserProfileId { get; set; }
         public UserProfile UserProfile { get; set; }
     }

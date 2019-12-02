@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -23,10 +23,12 @@ namespace Akel.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private UserManager<User> userManager;
-        public HomeController(ILogger<HomeController> logger,UserManager<User> userManager,iFriendService friendService)
+        private readonly UnitOfWork context;
+        public HomeController(ILogger<HomeController> logger, UserManager<User> userManager, iFriendService friendService)
         {
             _logger = logger;
             this.userManager = userManager;
+            context = new UnitOfWork();
         }
 
         public IActionResult Index()
@@ -37,7 +39,13 @@ namespace Akel.Controllers
         {
             return View();
         }
-          public IActionResult Chats()
+        public IActionResult Front()
+        {
+            var id = userManager.GetUserId(HttpContext.User);
+            _logger.LogInformation(id);
+            return Redirect("http://localhost:8080/#/sign");
+        }
+        public IActionResult Chats()
         {
             return View();
         }
@@ -52,11 +60,22 @@ namespace Akel.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        [HttpPost("/token")]
-        public async Task Token()
+
+        public class TokenVM
         {
-            var username = Request.Form["username"];
-            var password = Request.Form["password"];
+            public string grant_type { get; set; }
+            public string username { get; set; }
+            public string password { get; set; }
+
+        }
+
+        [HttpPost("/token")]
+        public async Task Token([FromBody]TokenVM token)
+        {
+           
+            
+            var username = token.username;
+            var password = token.password;
             var identity = await GetIdentity(username, password);
             if (identity == null)
             {
@@ -76,12 +95,14 @@ namespace Akel.Controllers
                     signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
             // сериализация ответа
-            
+
+            var user = await userManager.FindByEmailAsync(identity.Name);
+            var profile = (await context.UserProfiles.GetAll()).FirstOrDefault(x => x.UserId == user.Id);
             var response = new
             {
                 access_token = encodedJwt,
-                username = identity.Name,
-                
+                username = user,
+                profile = profile
             };
 
            

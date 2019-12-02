@@ -1,19 +1,20 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Akel.Domain.Core;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Akel.Domain.Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Akel.Infrastructure.Data;
 
 namespace Akel.Areas.Identity.Pages.Account
 {
@@ -24,7 +25,7 @@ namespace Akel.Areas.Identity.Pages.Account
         private readonly UserManager<User> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-
+        private UnitOfWork context;
         public RegisterModel(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
@@ -35,6 +36,7 @@ namespace Akel.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            context = new UnitOfWork();
         }
 
         [BindProperty]
@@ -50,6 +52,19 @@ namespace Akel.Areas.Identity.Pages.Account
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
+            [Required]
+            [Display(Name = "FirstName")]
+            public string FirstName { get; set; }
+            [Required]
+            [Display(Name = "LastName")]
+            public string LastName { get; set; }
+            [BindProperty,Required]
+            [Display(Name = "Gender")]
+            public string Gender { get; set; }
+
+            [DataType(DataType.DateTime)]
+            [Display(Name = "Birthday")]
+            public DateTime Birthday { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
@@ -71,12 +86,24 @@ namespace Akel.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl = returnUrl ?? Url.Content("~/Account/Login");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
                 var user = new User { UserName = Input.Email, Email = Input.Email };
+                
                 var result = await _userManager.CreateAsync(user, Input.Password);
+                var ct = await _userManager.FindByEmailAsync(Input.Email);
+                UserProfile userProfile = new UserProfile
+                {
+                    UserId = ct.Id,
+                    LastName = Input.LastName,
+                    FirstName = Input.FirstName,
+                    Birthday = Input.Birthday,
+                    Sex = Input.Gender == "true" ? true : false
+                };
+                await context.UserProfiles.Create(userProfile);
+                await context.Save();
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
@@ -99,7 +126,7 @@ namespace Akel.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        return Redirect("http://localhost:8080/#/sign");
                     }
                 }
                 foreach (var error in result.Errors)

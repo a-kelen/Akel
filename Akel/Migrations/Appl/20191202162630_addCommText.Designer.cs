@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Akel.Migrations.Appl
 {
     [DbContext(typeof(ApplContext))]
-    [Migration("20191009133145_Appl")]
-    partial class Appl
+    [Migration("20191202162630_addCommText")]
+    partial class addCommText
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,6 +30,9 @@ namespace Akel.Migrations.Appl
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("QuestionId");
@@ -43,10 +46,8 @@ namespace Akel.Migrations.Appl
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte[]>("Avatar")
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserProfileId")
@@ -85,6 +86,9 @@ namespace Akel.Migrations.Appl
                     b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Text")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
 
@@ -116,6 +120,25 @@ namespace Akel.Migrations.Appl
                     b.ToTable("Friends");
                 });
 
+            modelBuilder.Entity("Akel.Domain.Core.Like", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserProfileId");
+
+                    b.ToTable("Likes");
+                });
+
             modelBuilder.Entity("Akel.Domain.Core.Message", b =>
                 {
                     b.Property<Guid>("Id")
@@ -124,6 +147,12 @@ namespace Akel.Migrations.Appl
 
                     b.Property<Guid?>("ChatId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UserProfileId")
                         .HasColumnType("uniqueidentifier");
@@ -160,15 +189,24 @@ namespace Akel.Migrations.Appl
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AuditionId")
+                    b.Property<Guid>("AuditionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CommentId")
+                    b.Property<int>("LikesCount")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("PhotoId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AuditionId");
+
+                    b.HasIndex("PhotoId")
+                        .IsUnique();
 
                     b.ToTable("Posts");
                 });
@@ -179,8 +217,14 @@ namespace Akel.Migrations.Appl
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("Correct")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("TestId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -327,9 +371,6 @@ namespace Akel.Migrations.Appl
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte[]>("Avatar")
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<DateTime>("Birthday")
                         .HasColumnType("datetime2");
 
@@ -342,15 +383,14 @@ namespace Akel.Migrations.Appl
                     b.Property<bool>("Sex")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId1")
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("UserProfiles");
                 });
@@ -543,7 +583,7 @@ namespace Akel.Migrations.Appl
                     b.HasOne("Akel.Domain.Core.UserProfile", "UserProfile")
                         .WithMany("Comments")
                         .HasForeignKey("UserProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -553,6 +593,15 @@ namespace Akel.Migrations.Appl
                         .WithMany("Friends")
                         .HasForeignKey("UserProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Akel.Domain.Core.Like", b =>
+                {
+                    b.HasOne("Akel.Domain.Core.UserProfile", "UserProfile")
+                        .WithMany("Likes")
+                        .HasForeignKey("UserProfileId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -571,7 +620,15 @@ namespace Akel.Migrations.Appl
                 {
                     b.HasOne("Akel.Domain.Core.Audition", "Audition")
                         .WithMany("Posts")
-                        .HasForeignKey("AuditionId");
+                        .HasForeignKey("AuditionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Akel.Domain.Core.Photo", "Photo")
+                        .WithOne("Post")
+                        .HasForeignKey("Akel.Domain.Core.Post", "PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Akel.Domain.Core.Question", b =>
@@ -604,7 +661,7 @@ namespace Akel.Migrations.Appl
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Akel.Domain.Core.UserProfile", "UserProfile")
+                    b.HasOne("Akel.Domain.Core.UserProfile", null)
                         .WithMany("Subscribers")
                         .HasForeignKey("UserProfileId");
                 });
@@ -621,8 +678,8 @@ namespace Akel.Migrations.Appl
             modelBuilder.Entity("Akel.Domain.Core.UserProfile", b =>
                 {
                     b.HasOne("Akel.Domain.Core.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1");
+                        .WithOne("UserProfile")
+                        .HasForeignKey("Akel.Domain.Core.UserProfile", "UserId");
                 });
 
             modelBuilder.Entity("Akel.Domain.Core.UserProfileChat", b =>

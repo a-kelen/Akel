@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Akel.Infrastructure.Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,6 +26,8 @@ namespace Akel.Infrastructure.Data
         TestRepository TestRepository;
         UserProfileRepository UserProfileRepository;
         SubscriberRepository SubscriberRepository;
+        PhotoRepository PhotoRepository;
+        LikeRepository LikeRepository;
 
         public AnswerRepository Answers { 
             get {
@@ -108,11 +111,25 @@ namespace Akel.Infrastructure.Data
                 return SubscriberRepository ?? (SubscriberRepository = new SubscriberRepository(db));
             }
         }
+        public PhotoRepository Photos
+        {
+            get
+            {
+                return PhotoRepository ?? (PhotoRepository = new PhotoRepository(db));
+            }
+        }
+        public LikeRepository Likes
+        {
+            get
+            {
+                return LikeRepository ?? (LikeRepository = new LikeRepository(db));
+            }
+        }
 
 
         public async Task Save()
         {
-            db.SaveChangesAsync();
+             db.SaveChangesAsync();
         }
 
         private bool disposed = false;

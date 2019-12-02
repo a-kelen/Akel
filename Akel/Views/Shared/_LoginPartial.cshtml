@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity
 @using Akel.Domain.Core
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
@@ -21,7 +21,7 @@ else
         <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+         <a href="http://localhost:8080/#/sign/">Sign</a>
     </li>
 }
 </ul>

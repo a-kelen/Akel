@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Akel.Domain.Interface;
@@ -34,7 +34,7 @@ namespace Akel.Infrastructure.Data
 
         public async Task<IEnumerable<Result>> GetAll()
         {
-            return db.Results;
+            return db.Results.Include("Test.Audition");
         }
 
         public async Task Update(Result item)

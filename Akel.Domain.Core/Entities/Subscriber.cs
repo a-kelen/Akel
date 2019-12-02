@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -14,7 +14,7 @@ namespace Akel.Domain.Core
         public Guid AuditionId { get; set; }
         public Audition Audition { get; set; }
         public Guid? UserProfileId { get; set; }
-        public UserProfile UserProfile { get; set; }
+        
 
     }
 }

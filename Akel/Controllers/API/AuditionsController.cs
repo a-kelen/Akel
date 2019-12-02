@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Akel.Domain.Core;
 using Akel.Infrastructure.Data;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.Extensions.Logging;
 
 namespace Akel.Controllers.API
 {
@@ -15,17 +17,41 @@ namespace Akel.Controllers.API
     public class AuditionsController : ControllerBase
     {
         private readonly UnitOfWork _context;
-
-        public AuditionsController(ApplContext context)
+        private readonly ILogger<AuditionsController> _logger;
+        public AuditionsController(ApplContext context, ILogger<AuditionsController> logger)
         {
             _context = new UnitOfWork();
+            _logger = logger;
         }
 
         // GET: api/Auditions
+        [EnableCors]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Audition>>> GetAuditions()
         {
             var res =  await _context.Auditions.GetAll();
+            return Ok(res);
+        }
+
+        public class AuditionVM
+        {
+            public Guid Id { get; set; }
+            public string Name { get; set; }
+            public Guid UserProfileId { get; set; }
+            public bool IsSubscribe { get; set; }
+            public int PostCount { get; set; }
+        }
+        [HttpGet("byuser/{id}")]
+        public async Task<ActionResult<IEnumerable<AuditionVM>>> GetAuditions(Guid id)
+        {
+            
+            var res = (await _context.Auditions.GetAll()).Where(x => x.UserProfileId == id).ToList();
+            return Ok(res);
+        }
+        [HttpGet("byowner/{id}")]
+        public async Task<ActionResult<IEnumerable<Audition>>> GetAuditionsOwn( Guid id)
+        {
+            var res = (await _context.Auditions.GetAll()).Where(x=>x.UserProfileId == id);
             return Ok(res);
         }
 
@@ -85,6 +111,26 @@ namespace Akel.Controllers.API
             await _context.Save();
 
             return CreatedAtAction("GetAudition", new { id = audition.Id }, audition);
+        }
+        [HttpPost("subscribe/{id}/{userId}")]
+        public async Task<ActionResult<Audition>> PostAudition(Guid id , Guid userId)
+        {
+            _logger.LogInformation(id.ToString());
+            _logger.LogInformation(userId.ToString());
+            Subscriber subscriber = (await _context.Subscribers.GetAll()).FirstOrDefault(x => x.AuditionId == id && x.UserProfileId == userId);
+            if(subscriber==null)
+            {
+                subscriber = new Subscriber { AuditionId = id, UserProfileId = userId };
+                await _context.Subscribers.Create(subscriber);
+                await _context.Save();
+                return Ok(subscriber);
+            } else
+            {
+                await _context.Subscribers.Delete(subscriber.Id);
+                await _context.Save();
+                return Ok(false);
+            }
+
         }
 
         // DELETE: api/Auditions/5

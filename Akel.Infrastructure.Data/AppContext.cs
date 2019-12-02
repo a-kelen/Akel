@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,7 +16,7 @@ namespace Akel.Infrastructure.Data
         public DbSet<Chat> Chats { get; set; }
         public DbSet<Audition> Auditions { get; set; }
         public DbSet<Friend> Friends { get; set; }
-
+        public DbSet<Like> Likes { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Question> Questions { get; set; }
@@ -28,7 +28,7 @@ namespace Akel.Infrastructure.Data
         
         public ApplContext(DbContextOptions<ApplContext> options):base(options)
         {
-         //   Database.EnsureDeleted();
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
         public ApplContext()
@@ -38,7 +38,7 @@ namespace Akel.Infrastructure.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=LAPTOP-T2OE9DJB\\SQLEXPRESS;Database=app;Trusted_Connection=True;MultipleActiveResultSets=true");
+            optionsBuilder.UseSqlServer("Server=DESKTOP-6L4JP9E\\SQLEXPRESS;Database=app;Trusted_Connection=True;MultipleActiveResultSets=true");
         }
         protected override void OnModelCreating(ModelBuilder mb)
         {
@@ -126,10 +126,7 @@ namespace Akel.Infrastructure.Data
                .HasOne(p => p.Audition)
                .WithMany(p => p.Subscribers)
                .HasForeignKey(p => p.AuditionId);
-            mb.Entity<Subscriber>()
-               .HasOne(p => p.UserProfile)
-               .WithMany(p => p.Subscribers)
-               .HasForeignKey(p => p.UserProfileId);
+            
             //
             mb.Entity<Test>().HasKey(p => p.Id);
             mb.Entity<Test>()
@@ -156,7 +153,13 @@ namespace Akel.Infrastructure.Data
                 .WithMany(c => c.Users)
                 .HasForeignKey(sc => sc.ChatId)
                 .OnDelete(DeleteBehavior.NoAction);
-         
+            //
+           
+            mb.Entity<Like>()
+            .HasOne(sc => sc.UserProfile)
+            .WithMany(sc => sc.Likes)
+            .HasForeignKey(sc => sc.UserProfileId)
+            .OnDelete(DeleteBehavior.NoAction);
 
 
         }
