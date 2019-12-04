@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,7 +17,7 @@ namespace Akel.Domain.Core
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public string Name { get; set; }
-       // public byte[] Avatar { get; set; }
+        public string Photo { get; set; }
         public Guid UserProfileId { get; set; }
         public UserProfile UserProfile { get; set; }
         public List<Post> Posts { get; set; }

@@ -113,6 +113,7 @@ namespace Akel.Controllers
         private async Task<ClaimsIdentity> GetIdentity(string username, string password)
         {
             User user = await userManager.FindByEmailAsync(username);
+
             var Hasher =
                         HttpContext.RequestServices.GetService(typeof(IPasswordHasher<User>)) as IPasswordHasher<User>;
 

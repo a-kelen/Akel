@@ -1,4 +1,4 @@
-﻿using Akel.Domain.Core;
+using Akel.Domain.Core;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -34,11 +34,12 @@ namespace Akel.Infrastructure.Data
 
         public async Task<IEnumerable<Post>> GetAll()
         {
-            return db.Posts;
+            return db.Posts.Include("Audition").Include("Photo").Include("Comments.UserProfile");
         }
 
         public async  Task Update(Post item)
         {
+         
             db.Entry(item).State = EntityState.Modified;
         }
     }

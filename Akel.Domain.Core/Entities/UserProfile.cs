@@ -29,7 +29,7 @@ namespace Akel.Domain.Core
         public string LastName { get; set; }
         public DateTime Birthday { get; set; }
         public bool Sex { get; set; }
-       // public byte[] Avatar { get; set; }
+        public byte[] Avatar { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
         public List<Audition> Auditions { get; set; }

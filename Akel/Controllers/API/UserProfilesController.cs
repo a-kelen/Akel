@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Akel.Domain.Core;
 using Akel.Infrastructure.Data;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Identity;
 
 namespace Akel.Controllers.API
 {
@@ -17,10 +18,14 @@ namespace Akel.Controllers.API
     {
         private readonly UnitOfWork _context;
         private readonly ILogger<UserProfilesController> logger;
-        public UserProfilesController(ApplContext context, ILogger<UserProfilesController> l)
+        private UserManager<User> userManager;
+
+
+        public UserProfilesController(ApplContext context, UserManager<User> userManager, ILogger<UserProfilesController> l)
         {
             _context = new UnitOfWork();
             logger = l;
+            this.userManager = userManager;
         }
 
         // GET: api/UserProfiles
@@ -112,6 +117,43 @@ namespace Akel.Controllers.API
             await _context.Save();
            
             return CreatedAtAction("GetUserProfile", new { id = userProfile.Id }, userProfile);
+        }
+        public class ChangePasswordVM
+        {
+            public string Username { get; set; }
+            public string OldPassword { get; set; }
+            public string NewPassword { get; set; }
+        }
+        [HttpPost("changepassword")]
+        public async Task<ActionResult<UserProfile>> ChangePassword([FromBody] ChangePasswordVM vM)
+        {
+            User user = await userManager.FindByEmailAsync(vM.Username);
+            var _passwordValidator =
+                HttpContext.RequestServices.GetService(typeof(IPasswordValidator<User>)) as IPasswordValidator<User>;
+            var Hasher =
+                        HttpContext.RequestServices.GetService(typeof(IPasswordHasher<User>)) as IPasswordHasher<User>;
+
+            User tempU = new User();
+
+            bool res = false;
+            if (user != null)
+                res = await userManager.CheckPasswordAsync(user, vM.OldPassword);
+            
+            if(res)
+            {
+                IdentityResult result =
+                await _passwordValidator.ValidateAsync(userManager, user, vM.NewPassword);
+                if (result.Succeeded)
+                {
+                    user.PasswordHash = Hasher.HashPassword(user, vM.NewPassword);
+                    await userManager.UpdateAsync(user);
+                    return Ok(true);
+                }
+                else return Ok(false);
+            }
+            else return Ok(false);
+
+
         }
 
         // DELETE: api/UserProfiles/5

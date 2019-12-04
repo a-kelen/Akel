@@ -9,6 +9,8 @@ using Akel.Domain.Core;
 using Akel.Infrastructure.Data;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.Extensions.Logging;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Akel.Controllers.API
 {
@@ -18,10 +20,14 @@ namespace Akel.Controllers.API
     {
         private readonly UnitOfWork _context;
         private readonly ILogger<AuditionsController> _logger;
-        public AuditionsController(ApplContext context, ILogger<AuditionsController> logger)
+        
+        private IHostingEnvironment _appEnvironment;
+
+        public AuditionsController(ApplContext context, ILogger<AuditionsController> logger, IHostingEnvironment appEnvironment)
         {
             _context = new UnitOfWork();
             _logger = logger;
+            _appEnvironment = appEnvironment;
         }
 
         // GET: api/Auditions
@@ -132,7 +138,22 @@ namespace Akel.Controllers.API
             }
 
         }
+        [HttpPost("addphoto/{id}")]
+        public async Task<ActionResult> AddPhoto([FromRoute]Guid id, IFormFile file)
+        {
 
+            string path = "/photos/" + Guid.NewGuid().ToString() + "_" + Request.Form.Files[0].FileName;
+            using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+            {
+                await Request.Form.Files[0].CopyToAsync(fileStream);
+            }
+            Audition a = await _context.Auditions.Get(id);
+            a.Photo = path;
+            await _context.Auditions.Update(a);
+            await _context.Save();
+
+            return Ok(a);
+        }
         // DELETE: api/Auditions/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Audition>> DeleteAudition(Guid id)

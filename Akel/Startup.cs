@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Mvc;
 using Akel.Infrastructure.Data.Signals;
 using Akel.Services.Interfaces;
 using Akel.Infrastructure.Services;
+using Microsoft.AspNetCore.Http.Connections;
 
 namespace Akel
 {
@@ -84,13 +85,14 @@ namespace Akel
                 .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddRazorPages();
             services.AddAutoMapper(typeof(Startup));
-            services.AddSignalR();
 
             services.AddTransient<UnitOfWork>();
             services.AddTransient<iFriendService, FriendService>();
 
             
             services.AddCors();
+            services.AddSignalR();
+
             //-----------------------------------------------------------------------\\
         }
        
@@ -135,9 +137,15 @@ namespace Akel
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+           
             app.UseSignalR(routes =>
             {
-                routes.MapHub<ChatHub>("/chat");
+                routes.MapHub<ChatHub>("/chat", options =>
+                {
+                    options.Transports =
+
+                        HttpTransportType.LongPolling;
+                });
             });
 
 

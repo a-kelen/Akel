@@ -30,6 +30,13 @@ namespace Akel.Controllers.API
         {
             return Ok( await _context.Posts.GetAll());
         }
+        [HttpGet("byuser/{id}")]
+        public async Task<ActionResult<IEnumerable<Post>>> GetPosts(Guid id)
+        {
+            var subs = (await _context.Subscribers.GetAll()).Where(x => x.UserProfileId == id).Select(x => x.AuditionId);
+            var res = (await _context.Posts.GetAll()).Where(x =>  subs.Any(t => t == x.AuditionId));
+            return Ok(res);
+        }
 
         // GET: api/Posts/5
         [HttpGet("{id}")]

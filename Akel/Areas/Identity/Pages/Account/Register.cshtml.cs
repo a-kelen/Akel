@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Akel.Infrastructure.Data;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace Akel.Areas.Identity.Pages.Account
 {
@@ -66,6 +68,9 @@ namespace Akel.Areas.Identity.Pages.Account
             [Display(Name = "Birthday")]
             public DateTime Birthday { get; set; }
 
+            [Display(Name = "Avatar")]
+            public IFormFile Avatar { get; set; }
+
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
@@ -94,6 +99,7 @@ namespace Akel.Areas.Identity.Pages.Account
                 
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 var ct = await _userManager.FindByEmailAsync(Input.Email);
+
                 UserProfile userProfile = new UserProfile
                 {
                     UserId = ct.Id,
@@ -102,6 +108,18 @@ namespace Akel.Areas.Identity.Pages.Account
                     Birthday = Input.Birthday,
                     Sex = Input.Gender == "true" ? true : false
                 };
+                
+                if (Input.Avatar != null)
+                {
+                    byte[] imageData = null;
+                    // считываем переданный файл в массив байтов
+                    using (var binaryReader = new BinaryReader(Input.Avatar.OpenReadStream()))
+                    {
+                        imageData = binaryReader.ReadBytes((int)Input.Avatar.Length);
+                    }
+                    userProfile.Avatar = imageData;
+                }
+
                 await context.UserProfiles.Create(userProfile);
                 await context.Save();
                 if (result.Succeeded)

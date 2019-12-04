@@ -28,20 +28,20 @@ namespace Akel.Controllers.API
             return Ok(await _context.Tests.GetAll());
         }
         [HttpGet("byaudition/{id}")]
-        public async Task<ActionResult<IEnumerable<Test>>> GetTests(Guid id)
+        public async Task<ActionResult<IEnumerable<Test>>> GetTestsBy(Guid id)
         {
             var res = (await _context.Tests.GetAll()).Where(x => x.AuditionId == id);
             return Ok(res);
         }
-
 
         public class PagedCollectionResponse<T> where T : class
         {
             public IEnumerable<T> Items { get; set; }
             public Uri NextPage { get; set; }
             public Uri PreviousPage { get; set; }
+            public int AllCount { get; set; }
         }
-        IEnumerable<Test> tests = new List<Test>()
+        IEnumerable<Test> tests2 = new List<Test>()
             {
                 new Test {Id = new Guid(),Title = "Title_1", Topic = "Topic_1"},
                 new Test {Id = new Guid(),Title = "Title_2", Topic = "Topic_2"},
@@ -58,6 +58,7 @@ namespace Akel.Controllers.API
         [HttpGet("paging")]
         public async Task<ActionResult<PagedCollectionResponse<Test>>> GetTests([FromQuery] SampleFilterModel filter)
         {
+            var tests = await _context.Tests.GetAll();
             Func<SampleFilterModel, IEnumerable<Test>> filterData = (filterModel) =>
             {
                 return tests.Skip((filterModel.Page - 1) * filter.Limit)
@@ -66,6 +67,7 @@ namespace Akel.Controllers.API
 
             var result = new PagedCollectionResponse<Test>();
             result.Items = filterData(filter);
+            result.AllCount = tests.Count();
             SampleFilterModel nextFilter = filter.Clone() as SampleFilterModel;
             nextFilter.Page += 1;
             String nextUrl = filterData(nextFilter).Count() <= 0 ? null : this.Url.Action("Get", null, nextFilter, Request.Scheme);
