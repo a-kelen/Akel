@@ -115,6 +115,10 @@ namespace Akel.Controllers.API
         {
             await _context.Auditions.Create(audition);
             await _context.Save();
+            Chat chat = new Chat();
+            chat.AuditionId = audition.Id;
+            await _context.Chats.Create(chat);
+            await _context.Save();
 
             return CreatedAtAction("GetAudition", new { id = audition.Id }, audition);
         }

@@ -35,7 +35,7 @@ namespace Akel.Infrastructure.Data
 
         public async Task<IEnumerable<Subscriber>> GetAll()
         {
-            return db.Subscribers;
+            return db.Subscribers.Include("Audition.Chat.Messages.UserProfile");
         }
 
         public async Task Update(Subscriber item)

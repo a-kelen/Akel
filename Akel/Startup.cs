@@ -118,6 +118,7 @@ namespace Akel
             app.UseStaticFiles();
 
             app.UseSwagger();
+
             app.UseCors(builder => builder.AllowAnyOrigin());
 
 
