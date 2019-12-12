@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +13,9 @@ namespace Akel.Infrastructure.Services
     public class FriendService : iFriendService
     {
         UnitOfWork unit;
-        public FriendService(UnitOfWork unit)
+        public FriendService()
         {
-            this.unit = unit;
+            this.unit = new UnitOfWork();
         }
         [Authorize]
         public async Task AddFriend(UserProfile user, UserProfile friend)

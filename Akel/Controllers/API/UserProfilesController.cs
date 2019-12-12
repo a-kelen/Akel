@@ -9,6 +9,7 @@ using Akel.Domain.Core;
 using Akel.Infrastructure.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
+using Akel.Services.Interfaces;
 
 namespace Akel.Controllers.API
 {
@@ -19,37 +20,37 @@ namespace Akel.Controllers.API
         private readonly UnitOfWork _context;
         private readonly ILogger<UserProfilesController> logger;
         private UserManager<User> userManager;
+        private readonly iUserProfileService profileService;
 
-
-        public UserProfilesController(ApplContext context, UserManager<User> userManager, ILogger<UserProfilesController> l)
+        public UserProfilesController(ApplContext context,
+            UserManager<User> userManager,
+            ILogger<UserProfilesController> l,
+            iUserProfileService service)
         {
             _context = new UnitOfWork();
             logger = l;
             this.userManager = userManager;
+            profileService = service;
         }
 
         // GET: api/UserProfiles
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserProfile>>> GetUserProfiles()
         {
-            return Ok(await _context.UserProfiles.GetAll());
+            return Ok( await profileService.Get());
         }
         
         [HttpGet("search/{searchedUser}")]
         public async Task<ActionResult<IEnumerable<UserProfile>>> GetFilteredUserProfiles(string searchedUser)
         {
-            IEnumerable<UserProfile> users = ((await _context.UserProfiles.GetAll()));
-                    
-            if (!String.IsNullOrEmpty(searchedUser))
-                users =  users.Where(p => p.FirstName.Contains(searchedUser) || p.LastName.Contains(searchedUser));
-            return Ok(users);
+            return Ok(await profileService.Search(searchedUser));
         }
 
         // GET: api/UserProfiles/5
         [HttpGet("{id}")]
         public async Task<ActionResult<UserProfile>> GetUserProfile(Guid id)
-        {   
-            var userProfile = await _context.UserProfiles.Get(id);
+        {
+            var userProfile = await profileService.GetById(id);
 
             if (userProfile == null)
             {
@@ -68,11 +69,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            await _context.UserProfiles.Update(userProfile);
+            await profileService.Update(userProfile);
 
             try
             {
-                await _context.Save();
+                await profileService.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -112,18 +113,12 @@ namespace Akel.Controllers.API
                 Birthday = vM.birthday,
                 Sex = vM.sex
             };
-            logger.LogInformation("sdfsdf");
-            await _context.UserProfiles.Create(userProfile);
-            await _context.Save();
+
+            userProfile = await profileService.Create(userProfile);
            
             return CreatedAtAction("GetUserProfile", new { id = userProfile.Id }, userProfile);
         }
-        public class ChangePasswordVM
-        {
-            public string Username { get; set; }
-            public string OldPassword { get; set; }
-            public string NewPassword { get; set; }
-        }
+        
         [HttpPost("changepassword")]
         public async Task<ActionResult<UserProfile>> ChangePassword([FromBody] ChangePasswordVM vM)
         {
@@ -160,15 +155,7 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<UserProfile>> DeleteUserProfile(Guid id)
         {
-            var userProfile = await _context.UserProfiles.Get(id);
-            if (userProfile == null)
-            {
-                return NotFound();
-            }
-
-            await _context.UserProfiles.Delete(userProfile.Id);
-            await _context.Save();
-
+            var userProfile = await profileService.Delete(id);
             return userProfile;
         }
 

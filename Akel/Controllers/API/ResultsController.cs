@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Akel.Domain.Core;
 using Akel.Infrastructure.Data;
+using Akel.Services.Interfaces;
 
 namespace Akel.Controllers.API
 {
@@ -15,9 +16,10 @@ namespace Akel.Controllers.API
     public class ResultsController : ControllerBase
     {
         private readonly UnitOfWork _context;
-
-        public ResultsController(ApplContext context)
+        private readonly iResultService resultService;
+        public ResultsController(ApplContext context , iResultService service)
         {
+            resultService = service;
             _context = new UnitOfWork();
         }
 
@@ -25,20 +27,20 @@ namespace Akel.Controllers.API
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Result>>> GetResults()
         {
-            return Ok(await _context.Results.GetAll());
+            return Ok(await resultService.Get());
         }
         [HttpGet("byuser/{id}")]
         public async Task<ActionResult<IEnumerable<Result>>> GetResultsByUser(Guid id)
         {
-            var res = (await _context.Results.GetAll()).Where(x => x.UserProfileId == id);
-            return Ok(res);
+            
+            return Ok(await resultService.GetByUser(id));
         }
 
         // GET: api/Results/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Result>> GetResult(Guid id)
         {
-            var result = await _context.Results.Get(id);
+            var result = await resultService.GetById(id);
 
             if (result == null)
             {
@@ -59,11 +61,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-           await _context.Results.Update(result);
+            await resultService.Update(result);
 
             try
             {
-                await _context.Save();
+                await resultService.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -86,8 +88,7 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Result>> PostResult(Result result)
         {
-            await _context.Results.Create(result);
-            await _context.Save();
+            result = await resultService.Create(result);
 
             return CreatedAtAction("GetResult", new { id = result.Id }, result);
         }
@@ -96,14 +97,7 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Result>> DeleteResult(Guid id)
         {
-            var result = await _context.Results.Get(id);
-            if (result == null)
-            {
-                return NotFound();
-            }
-
-            await _context.Results.Delete(result.Id);
-            await _context.Save();
+            var result = await resultService.Delete(id);
 
             return result;
         }

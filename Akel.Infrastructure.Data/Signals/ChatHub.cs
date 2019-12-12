@@ -13,6 +13,7 @@ namespace Akel.Infrastructure.Data.Signals
     public class ChatHub: Hub
     {
         UnitOfWork unit = new UnitOfWork();
+
         public async Task Enter(Guid userProfileId)
         {
 

@@ -9,6 +9,7 @@ using Akel.Domain.Core;
 using Akel.Infrastructure.Data;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Akel.Services.Interfaces;
 
 namespace Akel.Controllers.API
 {
@@ -18,8 +19,10 @@ namespace Akel.Controllers.API
     {
         private readonly UnitOfWork _context;
         private IHostingEnvironment _appEnvironment;
-        public PostsController(ApplContext context, IHostingEnvironment appEnvironment)
+        private readonly iPostService postService;
+        public PostsController(ApplContext context, IHostingEnvironment appEnvironment, iPostService postService )
         {
+            this.postService = postService;
             _context = new UnitOfWork();
             _appEnvironment = appEnvironment;
         }
@@ -28,21 +31,19 @@ namespace Akel.Controllers.API
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Post>>> GetPosts()
         {
-            return Ok( await _context.Posts.GetAll());
+            return Ok( await postService.Get() );
         }
         [HttpGet("byuser/{id}")]
         public async Task<ActionResult<IEnumerable<Post>>> GetPosts(Guid id)
         {
-            var subs = (await _context.Subscribers.GetAll()).Where(x => x.UserProfileId == id).Select(x => x.AuditionId);
-            var res = (await _context.Posts.GetAll()).Where(x =>  subs.Any(t => t == x.AuditionId));
-            return Ok(res);
+            return Ok(await postService.GetByUser(id));
         }
 
         // GET: api/Posts/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Post>> GetPost(Guid id)
         {
-            var post = await _context.Posts.Get(id);
+            var post = await postService.GetById(id);
 
             if (post == null)
             {
@@ -75,11 +76,10 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            await _context.Posts.Update(post);
-
+            await postService.Update(post);
             try
             {
-                await _context.Save();
+                await postService.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -107,8 +107,6 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Post>> PostPost(CreatePostVM vm)
         {
-
-
             Post post = new Post
             {
                 Text = vm.Text,
@@ -116,9 +114,8 @@ namespace Akel.Controllers.API
                 LikesCount = vm.Likes,
                 PhotoId = vm.PhotoId
             };
-            await _context.Posts.Create(post);
-            await _context.Save();
 
+            post = await postService.Create(post);
             return CreatedAtAction("GetPost", new { id = post.Id }, post);
         }
         public class LikeVM
@@ -147,9 +144,7 @@ namespace Akel.Controllers.API
                 await _context.Save();
                 return Ok(new { result = false, id = vm.PostId , likes = post.LikesCount });
             }
-            
-
-          
+ 
         }
         [HttpPost("addphoto")]
         public async Task<ActionResult<Photo>> AddPhoto(IFormFile file)
@@ -161,8 +156,7 @@ namespace Akel.Controllers.API
                     await Request.Form.Files[0].CopyToAsync(fileStream);
                 }
                 Photo photo = new Photo { Name = Request.Form.Files[0].FileName, Path = path };
-                await _context.Photos.Create(photo);
-                await _context.Save();
+            photo = await postService.AddPhoto(photo);
 
             return CreatedAtAction("GetPhoto", new { id = photo.Id }, photo);
         }
@@ -171,14 +165,7 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Post>> DeletePost(Guid id)
         {
-            var post = await _context.Posts.Get(id);
-            if (post == null)
-            {
-                return NotFound();
-            }
-
-            await _context.Posts.Delete(post.Id);
-            await _context.Save();
+            Post post = await postService.Delete(id);
 
             return post;
         }

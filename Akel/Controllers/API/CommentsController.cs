@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Akel.Domain.Core;
 using Akel.Infrastructure.Data;
+using Akel.Services.Interfaces;
 
 namespace Akel.Controllers.API
 {
@@ -15,10 +16,12 @@ namespace Akel.Controllers.API
     public class CommentsController : ControllerBase
     {
         private readonly UnitOfWork _context;
+        private readonly iCommentService commentService;
 
-        public CommentsController(ApplContext context)
+        public CommentsController(ApplContext context, iCommentService commentService)
         {
             _context = new UnitOfWork();
+            this.commentService = commentService;
             
         }
 
@@ -26,14 +29,14 @@ namespace Akel.Controllers.API
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
         {
-            return Ok( await _context.Comments.GetAll());
+            return Ok( await commentService.Get());
         }
 
         // GET: api/Comments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Comment>> GetComment(Guid id)
         {
-            var comment = await _context.Comments.Get(id);
+            var comment = await commentService.GetById(id);
 
             if (comment == null)
             {
@@ -54,11 +57,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            await _context.Comments.Update(comment);
+            await commentService.Update(comment);
 
             try
             {
-                await _context.Save();
+                await commentService.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -81,8 +84,7 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Comment>> PostComment(Comment comment)
         {
-            await _context.Comments.Create(comment);
-            await _context.Save();
+            comment = await commentService.Create(comment);
 
             return CreatedAtAction("GetComment", new { id = comment.Id }, comment);
         }
@@ -91,14 +93,7 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Comment>> DeleteComment(Guid id)
         {
-            var comment = await _context.Comments.Get(id);
-            if (comment == null)
-            {
-                return NotFound();
-            }
-
-            await _context.Comments.Delete(comment.Id);
-            await _context.Save();
+            var comment = await commentService.Delete(id);
 
             return comment;
         }

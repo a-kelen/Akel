@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Akel.Domain.Core;
 using Akel.Infrastructure.Data;
+using Akel.Services.Interfaces;
 
 namespace Akel.Controllers.API
 {
@@ -15,30 +16,32 @@ namespace Akel.Controllers.API
     public class SubscribersController : ControllerBase
     {
         private readonly UnitOfWork _context;
+        private readonly iSubscriberService subscriberService;
 
-        public SubscribersController(ApplContext context)
+        public SubscribersController(ApplContext context, iSubscriberService service)
         {
             _context = new UnitOfWork();
+            subscriberService = service;
         }
 
         // GET: api/Subscribers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Subscriber>>> GetSubscribers()
         {
-            return Ok(await _context.Subscribers.GetAll());
+            return Ok( await subscriberService.Get());
         }
 
         // GET: api/Subscribers/5
         [HttpGet("byuser/{id}")]
         public async Task<ActionResult<Subscriber>> GetSubscriberByUser(Guid id)
         {
-            var res = (await _context.Subscribers.GetAll()).Where(x => x.UserProfileId == id);
-            return Ok(res);
+           
+            return Ok(await subscriberService.GetByUser(id));
         }
         [HttpGet("{id}")] 
         public async Task<ActionResult<Subscriber>> GetSubscriber(Guid id)
         {
-            var subscriber = await _context.Subscribers.Get(id);
+            var subscriber = await subscriberService.GetById(id);
 
             if (subscriber == null)
             {
@@ -59,11 +62,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            await _context.Subscribers.Update(subscriber);
+            await subscriberService.Update(subscriber);
 
             try
             {
-                await _context.Save();
+                await subscriberService.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -86,8 +89,7 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Subscriber>> PostSubscriber(Subscriber subscriber)
         {
-           await _context.Subscribers.Create(subscriber);
-            await _context.Save();
+            subscriber = await subscriberService.Create(subscriber);
 
             return CreatedAtAction("GetSubscriber", new { id = subscriber.Id }, subscriber);
         }
@@ -96,14 +98,7 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Subscriber>> DeleteSubscriber(Guid id)
         {
-            var subscriber = await _context.Subscribers.Get(id);
-            if (subscriber == null)
-            {
-                return NotFound();
-            }
-
-            await _context.Subscribers.Delete(subscriber.Id);
-            await _context.Save();
+            var subscriber = await subscriberService.Delete(id);
 
             return subscriber;
         }

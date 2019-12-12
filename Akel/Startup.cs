@@ -87,17 +87,27 @@ namespace Akel
             services.AddAutoMapper(typeof(Startup));
 
             services.AddTransient<UnitOfWork>();
-            services.AddTransient<iFriendService, FriendService>();
 
             
             services.AddCors();
             services.AddSignalR();
 
+            services.AddSingleton<UnitOfWork>();
+            services.AddTransient<iAuditionService, AuditionService>();
+            services.AddTransient<iChatService, ChatService>();
+            services.AddTransient<iCommentService, CommentService>();
+            services.AddTransient<iFriendService, FriendService>();
+            services.AddTransient<iPostService, PostService>();
+            services.AddTransient<iResultService, ResultService>();
+            services.AddTransient<iSubscriberService, SubscriberService>();
+            services.AddTransient<iTestService, TestService>();
+            services.AddTransient<iUserProfileService, UserProfileService>();
+
             //-----------------------------------------------------------------------\\
         }
-       
-        
-        
+
+
+
         public void Configure(IApplicationBuilder app,
                               IWebHostEnvironment env,
                               UserManager<User> userManager,

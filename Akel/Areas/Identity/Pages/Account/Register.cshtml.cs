@@ -109,16 +109,7 @@ namespace Akel.Areas.Identity.Pages.Account
                     Sex = Input.Gender == "true" ? true : false
                 };
                 
-                if (Input.Avatar != null)
-                {
-                    byte[] imageData = null;
-                    // считываем переданный файл в массив байтов
-                    using (var binaryReader = new BinaryReader(Input.Avatar.OpenReadStream()))
-                    {
-                        imageData = binaryReader.ReadBytes((int)Input.Avatar.Length);
-                    }
-                    userProfile.Avatar = imageData;
-                }
+               
 
                 await context.UserProfiles.Create(userProfile);
                 await context.Save();

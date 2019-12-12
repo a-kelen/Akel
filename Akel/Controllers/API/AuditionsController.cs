@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.Extensions.Logging;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Akel.Infrastructure.Services;
+using Akel.Services.Interfaces;
 
 namespace Akel.Controllers.API
 {
@@ -20,14 +22,19 @@ namespace Akel.Controllers.API
     {
         private readonly UnitOfWork _context;
         private readonly ILogger<AuditionsController> _logger;
-        
+        private readonly iAuditionService auditionService;
+
         private IHostingEnvironment _appEnvironment;
 
-        public AuditionsController(ApplContext context, ILogger<AuditionsController> logger, IHostingEnvironment appEnvironment)
+        public AuditionsController(ApplContext context,
+            ILogger<AuditionsController> logger,
+            IHostingEnvironment appEnvironment ,
+            iAuditionService auditionService)
         {
             _context = new UnitOfWork();
             _logger = logger;
             _appEnvironment = appEnvironment;
+            this.auditionService = auditionService;
         }
 
         // GET: api/Auditions
@@ -35,8 +42,8 @@ namespace Akel.Controllers.API
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Audition>>> GetAuditions()
         {
-            var res =  await _context.Auditions.GetAll();
-            return Ok(res);
+           
+            return Ok(await auditionService.Get());
         }
 
         public class AuditionVM
@@ -50,14 +57,14 @@ namespace Akel.Controllers.API
         [HttpGet("byuser/{id}")]
         public async Task<ActionResult<IEnumerable<AuditionVM>>> GetAuditions(Guid id)
         {
-            
-            var res = (await _context.Auditions.GetAll()).Where(x => x.UserProfileId == id).ToList();
+
+            var res = await auditionService.GetByOwner(id);
             return Ok(res);
         }
         [HttpGet("byowner/{id}")]
         public async Task<ActionResult<IEnumerable<Audition>>> GetAuditionsOwn( Guid id)
         {
-            var res = (await _context.Auditions.GetAll()).Where(x=>x.UserProfileId == id);
+            var res = await auditionService.GetByOwner(id);
             return Ok(res);
         }
 
@@ -65,7 +72,7 @@ namespace Akel.Controllers.API
         [HttpGet("{id}")]
         public async Task<ActionResult<Audition>> GetAudition(Guid id)
         {
-            var audition = await _context.Auditions.Get(id);
+            var audition = await auditionService.GetById(id);
 
             if (audition == null)
             {
@@ -86,11 +93,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            await _context.Auditions.Update(audition);
+            await auditionService.Update(audition);
 
             try
             {
-                await _context.Save();
+                await auditionService.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -113,31 +120,19 @@ namespace Akel.Controllers.API
         [HttpPost]
         public async Task<ActionResult<Audition>> PostAudition(Audition audition)
         {
-            await _context.Auditions.Create(audition);
-            await _context.Save();
-            Chat chat = new Chat();
-            chat.AuditionId = audition.Id;
-            await _context.Chats.Create(chat);
-            await _context.Save();
+            audition = await auditionService.Create(audition);
 
             return CreatedAtAction("GetAudition", new { id = audition.Id }, audition);
         }
         [HttpPost("subscribe/{id}/{userId}")]
-        public async Task<ActionResult<Audition>> PostAudition(Guid id , Guid userId)
+        public async Task<ActionResult<Subscriber>> PostAudition(Guid id , Guid userId)
         {
-            _logger.LogInformation(id.ToString());
-            _logger.LogInformation(userId.ToString());
-            Subscriber subscriber = (await _context.Subscribers.GetAll()).FirstOrDefault(x => x.AuditionId == id && x.UserProfileId == userId);
-            if(subscriber==null)
+            Subscriber subscriber = await auditionService.Subscribe(id, userId);
+            if(subscriber!=null)
             {
-                subscriber = new Subscriber { AuditionId = id, UserProfileId = userId };
-                await _context.Subscribers.Create(subscriber);
-                await _context.Save();
                 return Ok(subscriber);
             } else
             {
-                await _context.Subscribers.Delete(subscriber.Id);
-                await _context.Save();
                 return Ok(false);
             }
 
@@ -151,10 +146,7 @@ namespace Akel.Controllers.API
             {
                 await Request.Form.Files[0].CopyToAsync(fileStream);
             }
-            Audition a = await _context.Auditions.Get(id);
-            a.Photo = path;
-            await _context.Auditions.Update(a);
-            await _context.Save();
+            Audition a = await auditionService.AddPhoto(id, path);
 
             return Ok(a);
         }
@@ -162,15 +154,8 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Audition>> DeleteAudition(Guid id)
         {
-            var audition = await _context.Auditions.Get(id);
-            if (audition == null)
-            {
-                return NotFound();
-            }
 
-            await _context.Auditions.Delete(audition.Id);
-            await _context.Save();
-
+            Audition audition = await auditionService.Delete(id);
             return audition;
         }
 

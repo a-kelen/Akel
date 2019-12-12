@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Akel.Domain.Core;
 using Akel.Infrastructure.Data;
+using Akel.Services.Interfaces;
 
 namespace Akel.Controllers.API
 {
@@ -15,9 +16,11 @@ namespace Akel.Controllers.API
     public class TestsController : ControllerBase
     {
         private readonly UnitOfWork _context;
+        private readonly iTestService testService;
 
-        public TestsController(ApplContext context)
+        public TestsController(ApplContext context, iTestService service)
         {
+            testService = service;
             _context = new UnitOfWork();
         }
 
@@ -25,68 +28,29 @@ namespace Akel.Controllers.API
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Test>>> GetTests()
         {
-            return Ok(await _context.Tests.GetAll());
+            return Ok(await testService.Get());
         }
         [HttpGet("byaudition/{id}")]
         public async Task<ActionResult<IEnumerable<Test>>> GetTestsBy(Guid id)
         {
-            var res = (await _context.Tests.GetAll()).Where(x => x.AuditionId == id);
-            return Ok(res);
+           
+            return Ok(await testService.GetByAudition(id));
         }
 
-        public class PagedCollectionResponse<T> where T : class
-        {
-            public IEnumerable<T> Items { get; set; }
-            public Uri NextPage { get; set; }
-            public Uri PreviousPage { get; set; }
-            public int AllCount { get; set; }
-        }
-        IEnumerable<Test> tests2 = new List<Test>()
-            {
-                new Test {Id = new Guid(),Title = "Title_1", Topic = "Topic_1"},
-                new Test {Id = new Guid(),Title = "Title_2", Topic = "Topic_2"},
-                new Test {Id = new Guid(),Title = "Title_3", Topic = "Topic_3"},
-                new Test {Id = new Guid(),Title = "Title_4", Topic = "Topic_4"},
-                new Test {Id = new Guid(),Title = "Title_5", Topic = "Topic_5"},
-                new Test {Id = new Guid(),Title = "Title_6", Topic = "Topic_6"},
-                new Test {Id = new Guid(),Title = "Title_7", Topic = "Topic_7"},
-                new Test {Id = new Guid(),Title = "Title_8", Topic = "Topic_8"},
-                new Test {Id = new Guid(),Title = "Title_9", Topic = "Topic_9"},
-                new Test {Id = new Guid(),Title = "Title_10", Topic = "Topic_10"},
-                new Test {Id = new Guid(),Title = "Title_11", Topic = "Topic_11"}
-            };
+        
+        
         [HttpGet("paging")]
         public async Task<ActionResult<PagedCollectionResponse<Test>>> GetTests([FromQuery] SampleFilterModel filter)
         {
-            var tests = await _context.Tests.GetAll();
-            Func<SampleFilterModel, IEnumerable<Test>> filterData = (filterModel) =>
-            {
-                return tests.Skip((filterModel.Page - 1) * filter.Limit)
-                .Take(filterModel.Limit);
-            };
 
-            var result = new PagedCollectionResponse<Test>();
-            result.Items = filterData(filter);
-            result.AllCount = tests.Count();
-            SampleFilterModel nextFilter = filter.Clone() as SampleFilterModel;
-            nextFilter.Page += 1;
-            String nextUrl = filterData(nextFilter).Count() <= 0 ? null : this.Url.Action("Get", null, nextFilter, Request.Scheme);
-
-            //Get previous page URL string  
-            SampleFilterModel previousFilter = filter.Clone() as SampleFilterModel;
-            previousFilter.Page -= 1;
-            String previousUrl = previousFilter.Page <= 0 ? null : this.Url.Action("Get", null, previousFilter, Request.Scheme);
-
-            result.NextPage = !String.IsNullOrWhiteSpace(nextUrl) ? new Uri(nextUrl) : null;
-            result.PreviousPage = !String.IsNullOrWhiteSpace(previousUrl) ? new Uri(previousUrl) : null;
-
-            return Ok(result);
+            var res = await testService.GetPage(filter);
+            return Ok(res);
         }
         // GET: api/Tests/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Test>> GetTest(Guid id)
         {
-            var test = await _context.Tests.Get(id);
+            var test = await testService.GetById(id);
 
             if (test == null)
             {
@@ -107,11 +71,11 @@ namespace Akel.Controllers.API
                 return BadRequest();
             }
 
-            await _context.Tests.Update(test);
+            await testService.Update(test);
 
             try
             {
-                await _context.Save();
+                await testService.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -153,14 +117,7 @@ namespace Akel.Controllers.API
                 Topic = vm.Topic,
                 Questions = vm.Questions
             };
-            await _context.Tests.Create(test);
-            await _context.Save();
-            foreach(var a in test.Questions)
-            {
-               // var c = a.Correct;
-                
-
-            }
+            test = await testService.Create(test);
 
             return CreatedAtAction("GetTest", new { id = test.Id }, test);
         }
@@ -169,15 +126,7 @@ namespace Akel.Controllers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<Test>> DeleteTest(Guid id)
         {
-            var test = await _context.Tests.Get(id);
-            if (test == null)
-            {
-                return NotFound();
-            }
-
-            await _context.Tests.Delete(test.Id);
-            await _context.Save();
-
+            var test = await testService.Delete(id);
             return test;
         }
 
