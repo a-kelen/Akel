@@ -125,7 +125,7 @@ namespace Akel.Controllers.API
             return CreatedAtAction("GetAudition", new { id = audition.Id }, audition);
         }
         [HttpPost("subscribe/{id}/{userId}")]
-        public async Task<ActionResult<Subscriber>> PostAudition(Guid id , Guid userId)
+        public async Task<ActionResult<Subscriber>> SubscribeSwitch(Guid id , Guid userId)
         {
             Subscriber subscriber = await auditionService.Subscribe(id, userId);
             if(subscriber!=null)

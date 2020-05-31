@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,9 +23,9 @@ namespace Akel.Controllers.API
 
         // GET: api/Messages
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Message>>> GetMessages()
+        public async Task<IEnumerable<Message>> GetMessages()
         {
-            return Ok( await _context.Messages.GetAll());
+            return await _context.Messages.GetAll();
         }
 
         // GET: api/Messages/5

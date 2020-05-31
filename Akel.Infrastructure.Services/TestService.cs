@@ -12,10 +12,10 @@ namespace Akel.Infrastructure.Services
 {
     public class TestService : iTestService
     {
-        private readonly UnitOfWork _context;
-        public TestService()
+        private readonly iUnitOfWork _context;
+        public TestService(iUnitOfWork unit)
         {
-            _context = new UnitOfWork();
+            _context = unit;
         }
 
         public async Task<Test> Create(Test test)

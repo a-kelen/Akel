@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Akel.Domain.Core;
 using Akel.Infrastructure.Data;
 using Akel.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Akel.Controllers.API
 {
@@ -79,7 +80,7 @@ namespace Akel.Controllers.API
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Results

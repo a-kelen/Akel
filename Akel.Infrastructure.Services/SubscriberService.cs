@@ -12,17 +12,16 @@ namespace Akel.Infrastructure.Services
 {
     public class SubscriberService : iSubscriberService
     {
-        private readonly UnitOfWork _context;
-        public SubscriberService()
+        private readonly iUnitOfWork _context;
+        public SubscriberService(iUnitOfWork unit)
         {
-            _context = new UnitOfWork();
+            _context = unit;
         }
 
         public async Task<Subscriber> Create(Subscriber subscriber)
         {
-            await _context.Subscribers.Create(subscriber);
-            await _context.Save();
-            return subscriber;
+            //await _context.Subscribers.Create(subscriber);
+            return  subscriber;
         }
 
         public async Task<Subscriber> Delete(Guid id)
@@ -34,7 +33,6 @@ namespace Akel.Infrastructure.Services
             }
 
             await _context.Subscribers.Delete(subscriber.Id);
-            await _context.Save();
             return subscriber;
         }
 

@@ -18,7 +18,7 @@ namespace Akel.Controllers.API
         private readonly UnitOfWork _context;
         private readonly iSubscriberService subscriberService;
 
-        public SubscribersController(ApplContext context, iSubscriberService service)
+        public SubscribersController(iSubscriberService service)
         {
             _context = new UnitOfWork();
             subscriberService = service;
@@ -26,17 +26,17 @@ namespace Akel.Controllers.API
 
         // GET: api/Subscribers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Subscriber>>> GetSubscribers()
+        public async Task<IEnumerable<Subscriber>> GetSubscribers()
         {
-            return Ok( await subscriberService.Get());
+            return await subscriberService.Get();
         }
 
         // GET: api/Subscribers/5
         [HttpGet("byuser/{id}")]
-        public async Task<ActionResult<Subscriber>> GetSubscriberByUser(Guid id)
+        public async Task<IEnumerable<Subscriber>> GetSubscriberByUser(Guid id)
         {
            
-            return Ok(await subscriberService.GetByUser(id));
+            return await subscriberService.GetByUser(id);
         }
         [HttpGet("{id}")] 
         public async Task<ActionResult<Subscriber>> GetSubscriber(Guid id)
@@ -51,9 +51,7 @@ namespace Akel.Controllers.API
             return subscriber;
         }
 
-        // PUT: api/Subscribers/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSubscriber(Guid id, Subscriber subscriber)
         {
@@ -84,10 +82,8 @@ namespace Akel.Controllers.API
         }
 
         // POST: api/Subscribers
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Subscriber>> PostSubscriber(Subscriber subscriber)
+        public async Task<IActionResult> PostSubscriber(Subscriber subscriber)
         {
             subscriber = await subscriberService.Create(subscriber);
 
@@ -105,7 +101,7 @@ namespace Akel.Controllers.API
 
         private bool SubscriberExists(Guid id)
         {
-            return _context.Subscribers.Get(id) == null;
+            return subscriberService.GetById(id) == null;
         }
     }
 }

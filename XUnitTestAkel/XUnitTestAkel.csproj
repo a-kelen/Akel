@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="Moq" Version="4.14.1" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Akel.Domain.Core\Akel.Domain.Core.csproj" />
+    <ProjectReference Include="..\Akel.Domain.Interface\Akel.Domain.Interface.csproj" />
+    <ProjectReference Include="..\Akel.Infrastructure.Data\Akel.Infrastructure.Data.csproj" />
+    <ProjectReference Include="..\Akel.Infrastructure.Services\Akel.Infrastructure.Services.csproj" />
+    <ProjectReference Include="..\Akel.Services.Interfaces\Akel.Services.Interfaces.csproj" />
+    <ProjectReference Include="..\Akel\Akel.csproj" />
+  </ItemGroup>
+
+</Project>

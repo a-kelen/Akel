@@ -46,7 +46,7 @@ namespace Akel
             
             services.AddDbContext<ApplContext>(options =>
             {
-                options.UseSqlServer( Configuration.GetConnectionString("DefaultConnection"),
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
                     sqlServerOptions =>
                     {
                         sqlServerOptions.MigrationsAssembly("Akel");
@@ -92,7 +92,7 @@ namespace Akel
             services.AddCors();
             services.AddSignalR();
 
-            services.AddSingleton<UnitOfWork>();
+            services.AddSingleton<iUnitOfWork,UnitOfWork>();
             services.AddTransient<iAuditionService, AuditionService>();
             services.AddTransient<iChatService, ChatService>();
             services.AddTransient<iCommentService, CommentService>();

@@ -16,15 +16,11 @@ namespace Akel.Infrastructure.Data.Signals
 
         public async Task Enter(Guid userProfileId)
         {
-
             var subs = (await unit.Subscribers.GetAll()).Where(x => x.UserProfileId == userProfileId).Select(x => x.AuditionId);
-
             foreach(var a in subs)
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, a.ToString());
             }
-
-            
         }
         public class MessageVM
         {
@@ -43,11 +39,7 @@ namespace Akel.Infrastructure.Data.Signals
                 await unit.Messages.Create(message);
                 await unit.Save();
                  await Clients.Group(m.auditionId.ToString()).SendAsync("Receive",message.ChatId, m.userId , m.username, message.Text , message.Date );
-            }
-             
-
-
-           
+            }  
         }
     }
 }

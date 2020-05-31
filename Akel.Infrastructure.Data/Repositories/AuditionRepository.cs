@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Akel.Infrastructure.Data
 {
-    public class AuditionRepository:IRepository<Audition>
+    public class AuditionRepository : IRepository<Audition>
     {
         private ApplContext db;
         public AuditionRepository(ApplContext context)

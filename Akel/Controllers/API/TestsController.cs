@@ -18,7 +18,7 @@ namespace Akel.Controllers.API
         private readonly UnitOfWork _context;
         private readonly iTestService testService;
 
-        public TestsController(ApplContext context, iTestService service)
+        public TestsController(iTestService service)
         {
             testService = service;
             _context = new UnitOfWork();
@@ -26,9 +26,9 @@ namespace Akel.Controllers.API
 
         // GET: api/Tests
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Test>>> GetTests()
+        public async Task<IEnumerable<Test>> GetTests()
         {
-            return Ok(await testService.Get());
+            return await testService.Get();
         }
         [HttpGet("byaudition/{id}")]
         public async Task<ActionResult<IEnumerable<Test>>> GetTestsBy(Guid id)

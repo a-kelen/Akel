@@ -1,3 +1,5 @@
+using Akel.Domain.Core;
+using Akel.Domain.Interface;
 using Akel.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -7,122 +9,178 @@ using System.Threading.Tasks;
 
 namespace Akel.Infrastructure.Data
 {
-    public class UnitOfWork:IDisposable
+    public class UnitOfWork: iUnitOfWork
     {
         public UnitOfWork()
         {
             this.db = new ApplContext();
         }
         ApplContext db;
-        AnswerRepository AnswerRepository;
-        AuditionRepository AuditionRepository;
-        ChatRepository ChatRepository;
-        CommentRepository CommentRepository;
-        FriendRepository FriendRepository;
-        MessageRepository MessageRepository;
-        PostRepository PostRepository;
-        QuestionRepository QuestionRepository;
-        ResultRepository ResultRepository;
-        TestRepository TestRepository;
-        UserProfileRepository UserProfileRepository;
-        SubscriberRepository SubscriberRepository;
-        PhotoRepository PhotoRepository;
-        LikeRepository LikeRepository;
+        IRepository<Answer> AnswerRepository;
+        IRepository<Audition> AuditionRepository;
+        IRepository<Chat> ChatRepository;
+        IRepository<Comment> CommentRepository;
+        IRepository<Friend> FriendRepository;
+        IRepository<Message> MessageRepository;
+        IRepository<Post> PostRepository;
+        IRepository<Question> QuestionRepository;
+        IRepository<Result> ResultRepository;
+        IRepository<Test> TestRepository;
+        IRepository<UserProfile> UserProfileRepository;
+        IRepository<Subscriber> SubscriberRepository;
+        IRepository<Photo> PhotoRepository;
+        IRepository<Like> LikeRepository;
 
-        public AnswerRepository Answers { 
+        public IRepository<Answer> Answers { 
             get {
                 return AnswerRepository ?? (AnswerRepository = new AnswerRepository(db)); 
-            } 
+            }
+            set
+            {
+                AnswerRepository = value;
+            }
         }
-        public AuditionRepository Auditions
+        public IRepository<Audition> Auditions
         {
             get
             {
                 return AuditionRepository ?? (AuditionRepository = new AuditionRepository(db));
             }
+            set
+            {
+                AuditionRepository = value;
+            }
         }
-        public ChatRepository Chats
+        public IRepository<Chat> Chats
         {
             get
             {
                 return ChatRepository ?? (ChatRepository = new ChatRepository(db));
             }
+            set
+            {
+                ChatRepository = value;
+            }
         }
-        public CommentRepository Comments
+        public IRepository<Comment> Comments
         {
             get
             {
                 return CommentRepository ?? (CommentRepository = new CommentRepository(db));
             }
+            set
+            {
+                CommentRepository = value;
+            }
         }
-        public FriendRepository Friends
+        public IRepository<Friend> Friends
         {
             get
             {
                 return FriendRepository ?? (FriendRepository = new FriendRepository(db));
             }
+            set
+            {
+               FriendRepository = value;
+            }
         }
-        public MessageRepository Messages
+        public IRepository<Message> Messages
         {
             get
             {
                 return MessageRepository ?? (MessageRepository = new MessageRepository(db));
             }
+            set
+            {
+                MessageRepository = value;
+            }
         }
-        public PostRepository Posts
+        public IRepository<Post> Posts
         {
             get
             {
                 return PostRepository ?? (PostRepository = new PostRepository(db));
             }
+            set
+            {
+                PostRepository = value;
+            }
         }
-        public QuestionRepository Questions
+        public IRepository<Question> Questions
         {
             get
             {
                 return QuestionRepository ?? (QuestionRepository = new QuestionRepository(db));
             }
+            set
+            {
+                QuestionRepository = value;
+            }
         }
-        public ResultRepository Results 
+        public IRepository<Result> Results 
         {
             get
             {
                 return ResultRepository ?? (ResultRepository = new ResultRepository(db));
             }
+            set
+            {
+                ResultRepository = value;
+            }
         }
-        public TestRepository Tests
+        public IRepository<Test> Tests
         {
             get
             {
                 return TestRepository ?? (TestRepository = new TestRepository(db));
             }
+            set
+            {
+                TestRepository = value;
+            }
         }
-        public UserProfileRepository UserProfiles
+        public IRepository<UserProfile> UserProfiles
         {
             get
             {
                 return UserProfileRepository ?? (UserProfileRepository = new UserProfileRepository(db));
             }
+            set
+            {
+                UserProfileRepository = value;
+            }
         }
-        public SubscriberRepository Subscribers
+        public IRepository<Subscriber> Subscribers
         {
             get
             {
                 return SubscriberRepository ?? (SubscriberRepository = new SubscriberRepository(db));
             }
+            set
+            {
+                SubscriberRepository = value;
+            }
         }
-        public PhotoRepository Photos
+        public IRepository<Photo> Photos
         {
             get
             {
                 return PhotoRepository ?? (PhotoRepository = new PhotoRepository(db));
             }
+            set
+            {
+                PhotoRepository = value;
+            }
         }
-        public LikeRepository Likes
+        public IRepository<Like> Likes
         {
             get
             {
                 return LikeRepository ?? (LikeRepository = new LikeRepository(db));
+            }
+            set
+            {
+                LikeRepository = value;
             }
         }
 

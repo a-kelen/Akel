@@ -15,6 +15,10 @@ namespace Akel.Infrastructure.Data
         {
             this.db = context;
         }
+        public SubscriberRepository()
+        {
+
+        }
         public async Task Create(Subscriber item)
         {
             this.db.Subscribers.Add(item);

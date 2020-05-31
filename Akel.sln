@@ -19,11 +19,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akel.Domain.Interface", "Ak
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AkelAPI", "AkelAPI\AkelAPI.csproj", "{8DECB31A-EC25-4A9C-9A20-D84A54DF66FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akel.Infrastructure.Services", "Akel.Infrastructure.Services\Akel.Infrastructure.Services.csproj", "{523708A4-52FC-4974-BAC0-89F396687229}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akel.Infrastructure.Services", "Akel.Infrastructure.Services\Akel.Infrastructure.Services.csproj", "{523708A4-52FC-4974-BAC0-89F396687229}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{9F23EB1E-555A-4002-AF7F-C03A6D64B7D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akel.Services.Interfaces", "Akel.Services.Interfaces\Akel.Services.Interfaces.csproj", "{A31F7775-0BCA-480A-BD3F-D50918B95E23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akel.Services.Interfaces", "Akel.Services.Interfaces\Akel.Services.Interfaces.csproj", "{A31F7775-0BCA-480A-BD3F-D50918B95E23}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XUnitTestAkel", "XUnitTestAkel\XUnitTestAkel.csproj", "{576EAFCE-807A-4D3E-BB53-4C985A5F874D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTest", "IntegrationTest\IntegrationTest.csproj", "{07F17596-BBA0-4967-A101-A691C54F9362}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +67,14 @@ Global
 		{A31F7775-0BCA-480A-BD3F-D50918B95E23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A31F7775-0BCA-480A-BD3F-D50918B95E23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A31F7775-0BCA-480A-BD3F-D50918B95E23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{576EAFCE-807A-4D3E-BB53-4C985A5F874D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{576EAFCE-807A-4D3E-BB53-4C985A5F874D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{576EAFCE-807A-4D3E-BB53-4C985A5F874D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{576EAFCE-807A-4D3E-BB53-4C985A5F874D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07F17596-BBA0-4967-A101-A691C54F9362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07F17596-BBA0-4967-A101-A691C54F9362}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07F17596-BBA0-4967-A101-A691C54F9362}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07F17596-BBA0-4967-A101-A691C54F9362}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
